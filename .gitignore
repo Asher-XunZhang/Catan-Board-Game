@@ -8,6 +8,6 @@
 /httpRequests/
 
 # PyCharm Project files
-idea/
+.idea/
 
 
