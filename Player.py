@@ -7,8 +7,13 @@ TODO: Add trading call
 
 
 class Player:
-    def __init__(self, resource_cards, development_cards, settlements, cities, roads, victory_points):
-        self.resource_cards = resource_cards
+    def __init__(self, bricks, ore, grain, lumber, wool,
+                 development_cards, settlements, cities, roads, victory_points):
+        self.bricks = bricks
+        self.ore = ore
+        self.grain = grain
+        self.lumber = lumber
+        self.wool = wool
         self.development_cards = development_cards
         self.settlements = settlements
         self.cities = cities
@@ -16,7 +21,8 @@ class Player:
         self.victory_points = victory_points
 
     def get_resource_cards(self):
-        return self.resource_cards
+        return self.bricks, self.ore, self.grain, \
+                self.lumber, self.wool
 
     def get_victory_points(self):
         self.count_victory_points()
