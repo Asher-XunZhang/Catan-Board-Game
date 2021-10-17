@@ -22,18 +22,18 @@ class Player:
 
     def get_resource_cards(self):
         return self.bricks, self.ore, self.grain, \
-                self.lumber, self.wool
+               self.lumber, self.wool
 
     def get_victory_points(self):
         self.count_victory_points()
         return self.victory_points
 
     def count_victory_points(self):
-        # for loop to find VP cards in development cards deck?
-        count = len(self.settlements) + \
-                2*len(self.cities)
+        count = 0
+        for card in self.development_cards:
+            count += self.development_cards.get_victory_points(card)
+        count += len(self.settlements) + 2 * len(self.cities)
         self.victory_points = count
-
 
     """
     def roll(self):
