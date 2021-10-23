@@ -11,14 +11,20 @@ class window:
         board = Board(screen)
         pygame.display.flip()
         while True:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    xMouse = event.pos[0]
+                    yMouse = event.pos[1]
+                    print(xMouse, yMouse)
+
             pygame.display.update()
 
 if __name__ == '__main__':

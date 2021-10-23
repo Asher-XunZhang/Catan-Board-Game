@@ -3,21 +3,26 @@ import pygame
 from calculation import *
 
 
-Type = {
-    "wool" : "../resources/wool.png",
-    "lumber" : "../resources/lumber.png",
-    "grain" : "../resources/grain.png",
-    "brick" : "../resources/brick.png",
-    "ore" : "../resources/ore.png",
-    "desert" : "../resources/desert.png",
+Image = {
+    "wool"    : "../resources/wool.png",
+    "lumber"  : "../resources/lumber.png",
+    "grain"   : "../resources/grain.png",
+    "brick"   : "../resources/brick.png",
+    "ore"     : "../resources/ore.png",
+    "hill"    : "../resources/brick.png",
+    "forest"  : "../resources/lumber.png",
+    "field"   : "../resources/grain.png",
+    "mountain": "../resources/ore.png",
+    "pasture" : "../resources/wool.png",
+    "desert"  : "../resources/desert.png",
 }
 Color = {
-    "wool" : (255, 255, 255),
-    "lumber"  : (153,  76, 0),
-    "grain" : (255, 128, 0),
-    "brick" : (205,92,92),
-    "ore"   : (224, 224, 224),
-    "desert": (255,215,0)
+    "pasture" : (124,252,  0),
+    "forest"  : (153, 76,  0),
+    "field"   : (255,128,  0),
+    "hill"    : (178, 34, 34),  #(205, 92, 92),
+    "mountain": (192,192,192), #(224,224,224),
+    "desert"  : (255,215,  0)
 }
 
 class Hexagon:
@@ -27,7 +32,7 @@ class Hexagon:
         self.id = id
         self.type = type
         self.position = position
-        self.image = pygame.image.load(Type[type]).convert_alpha()
+        self.image = pygame.image.load(Image[type]).convert_alpha()
         self.draw_regular_polygon(Color[type], (0, 0))
         self.surface.set_colorkey((0, 0, 0))
         surface.blit(self.surface, position)

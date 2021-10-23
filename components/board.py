@@ -22,7 +22,7 @@ class Board:
             for i in range(6)
         ])
         element = []
-        element += ["wool"] * 4 + ["lumber"] * 4 + ["grain"] * 4 + ["brick"] * 3 + ["ore"] * 3
+        element += ["pasture"] * 4 + ["forest"] * 4 + ["field"] * 4 + ["hill"] * 3 + ["mountain"] * 3
         random.shuffle(element)
         random.shuffle(element)
         element.insert(9, "desert")
