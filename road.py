@@ -4,6 +4,7 @@ class Road:
 
     def __init__(self, owner, surface, start, end):
         self.owner = owner
+        self.surface = surface
         self.start = start
         self.end = end
     
