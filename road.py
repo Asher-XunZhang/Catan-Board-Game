@@ -7,8 +7,7 @@ class Road:
         self.surface = surface
         self.start = start
         self.end = end
-    
 
     def draw_road(self):
         points = {self.start, self.end} #The two points for the line
-        pygame.draw.polygon(self.surface, self.owner.color, points, 5)
+        pygame.draw.polygon(self.surface, self.owner.color, points, 4)
