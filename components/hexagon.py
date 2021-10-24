@@ -26,12 +26,15 @@ Color = {
 }
 
 class Hexagon:
-    def __init__(self, surface, id, type, hex_side, position):
+    def __init__(self, surface, id, num, type, hex_side, position):
         self.hex_side = hex_side
         self.surface = pygame.Surface((self.hex_side*2, self.hex_side*2))
         self.id = id
         self.type = type
+        self.settlements = []
+        self.num = num
         self.position = position
+        self.font = pygame.font.SysFont('Arial', 25)
         self.image = pygame.image.load(Image[type]).convert_alpha()
         self.draw_regular_polygon(Color[type], (0, 0))
         self.surface.set_colorkey((0, 0, 0))
@@ -45,5 +48,8 @@ class Hexagon:
             (x + r * sin(2 * pi * i / n), y + r * cos(2 * pi * i / n))
             for i in range(n)
         ])
+        pygame.draw.circle(self.surface, (255, 255, 255), (x, y+30), 15)
+        num_text = self.font.render(str(self.num), True, (6, 6, 6))
+        self.surface.blit(num_text, (x-8, y+15))
         self.image = pygame.transform.scale(self.image, (self.hex_side, self.hex_side))
         self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))

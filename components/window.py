@@ -1,6 +1,6 @@
 import pygame
 from board import Board
-
+from random import *
 
 class window:
     def __init__(self):
@@ -9,9 +9,9 @@ class window:
         screen.fill((0,191,255))
         pygame.display.set_caption("Catan")
         board = Board(screen)
+        hexes = board.hexes_infos()
         pygame.display.flip()
         while True:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -26,6 +26,14 @@ class window:
                     print(xMouse, yMouse)
 
             pygame.display.update()
+
+    def dice_roll(self):
+        seed(1)
+        value1 = randint(1, 6)
+        value2 = randint(1, 6)
+        # if value == 7, call robber
+        return (value1, value2)
+
 
 if __name__ == '__main__':
     game = window()
