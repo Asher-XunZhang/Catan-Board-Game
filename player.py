@@ -8,8 +8,10 @@ TODO: Add trading call
 
 class Player:
     def __init__(self, bricks, ore, grain, lumber, wool,
-                 development_cards, settlements, cities, roads, victory_points):
+                 development_cards, settlements, cities, roads,
+                 victory_points, color):
         self.bricks = bricks
+        self.color = color
         self.ore = ore
         self.grain = grain
         self.lumber = lumber
