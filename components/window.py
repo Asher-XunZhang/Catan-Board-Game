@@ -22,7 +22,7 @@ class Window:
         hexes = board.hexes_infos()
         # User input for player color, settlement locations
         my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
-        robber = Robber(board, 0)
+        robber = Robber(board, (0, 0))
         pygame.display.flip()
         while True:
             for event in pygame.event.get():
