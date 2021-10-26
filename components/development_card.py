@@ -3,9 +3,7 @@ Development Card Class
 
 TODO: Implement Monopoly card
 """
-# import Robber
 from road import Road
-
 
 
 class DevelopmentCard:
@@ -17,12 +15,11 @@ class DevelopmentCard:
     def get_victory_points(self):
         return self.victory_points
 
-    def action(self, player):
+    def action(self, player, robber):
         if self.name == "Victory Point":
             pass
         elif self.name == "Knight":
-            pass
-            # Call move Robber function
+            robber.move()
         elif self.name == "Year of Plenty":
             player.add_double_resources("field")
         elif self.name == "Road Building":
@@ -32,4 +29,3 @@ class DevelopmentCard:
             road2.draw_road()
             player.roads += road1
             player.roads += road2
-
