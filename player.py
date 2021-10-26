@@ -1,8 +1,6 @@
 """
 Player class
 
-TODO: Add edge case for development cards with victory points
-TODO: Add trading call
 """
 
 
@@ -61,9 +59,3 @@ class Player:
         elif element == "mountain":
             self.ore += 2
 
-
-    """
-    def roll(self):
-        call roll function
-        increment resource cards
-    """
