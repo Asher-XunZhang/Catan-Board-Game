@@ -2,7 +2,7 @@ import pygame
 from board import Board
 from random import *
 from player import Player
-# import Robber
+from robber import Robber
 
 
 def dice_roll():
@@ -22,7 +22,7 @@ class Window:
         hexes = board.hexes_infos()
         # User input for player color, settlement locations
         my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
-        # Create Robber
+        robber = Robber(board, 0)
         pygame.display.flip()
         while True:
             for event in pygame.event.get():
@@ -40,10 +40,12 @@ class Window:
                     num1, num2 = dice_roll()
                     total = num1 + num2
                     if total == 7:
-                        pass
-                        # Call Robber move function
+                        # pick new position for robber
+                        new_position = 0
+                        robber.move(new_position)
                     else:
                         for tile in hexes:
+                            # Check for robber, do not increment if present
                             if tile.num == total:
                                 for settlement in tile.settlements:
                                     pass
