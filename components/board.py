@@ -45,3 +45,6 @@ class Board:
             else:
                 hex = Hexagon(self.surface, i, element[i], hex_side, ((i-16)*2*hex_side + initX, 8*hex_side+initY-60))
             self.hexes.append(hex)
+
+    def hexes_infos(self):
+        return self.hexes
