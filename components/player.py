@@ -35,6 +35,24 @@ class Player:
         count += len(self.settlements) + 2 * len(self.cities)
         self.victory_points = count
 
+    def send_trade(self, other_player, bricks_val, ore_val, grain_val, lumber_val, wool_val):
+        if (bricks_val <= self.bricks or ore_val <= self.ore or grain_val <= self.grain or lumber_val <= self.lumber or wool_val <= self.wool):
+            if (bricks_val <= other_player.bricks or ore_val <= other_player.ore or grain_val <= other_player.grain or lumber_val <= other_player.lumber or wool_val <= other_player.wool):
+                self.bricks += bricks_val
+                self.ore += ore_val
+                self.grain += grain_val
+                self.lumber += lumber_val
+                self.wool += wool_val
+                s =  "Trade complete!"
+                return s
+            else:
+                s = "Cannot make trade: Your opponent doesn't have the resources"
+                return s
+        else:
+            s = "Cannot make trade: You don't have the resources"
+            return s
+
+
     def add_single_resources(self, element):
         if element == "hills":
             self.bricks += 1
