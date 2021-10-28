@@ -3,6 +3,7 @@ from board import Board
 from random import *
 from player import Player
 from robber import Robber
+from settler import Settler
 
 
 def dice_roll():
