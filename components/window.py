@@ -7,7 +7,7 @@ from settler import Settler
 
 
 def dice_roll():
-    seed(1)
+    seed()
     value1 = randint(1, 6)
     value2 = randint(1, 6)
     return value1, value2
@@ -23,6 +23,10 @@ class Window:
         hexes = board.hexes_infos()
         # User input for player color, settlement locations
         my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
+        settlement1 = Settler(my_player, Board, (0, 0))
+        my_player.settlements.append(settlement1)
+        # Hardcode adding settlement to tile for test purposes
+        hexes[7].settlements.append(settlement1)
         robber = Robber(board, (0, 0))
         pygame.display.flip()
         while True:
@@ -49,9 +53,8 @@ class Window:
                             # Check for robber, do not increment if present
                             if tile.num == total:
                                 for settlement in tile.settlements:
-                                    pass
-                                    # settlement.owner.add_single_resources(tile.element)
-                                # Iterate through cities?
+                                    settlement.owner.add_single_resources(tile.type)
+                                # Iterate through cities
 
             pygame.display.update()
 
