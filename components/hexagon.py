@@ -4,12 +4,12 @@ from calculation import *
 
 
 Type = {
-    "wool" : "..\team-6\resources\wool.png",
-    "lumber" : "..\team-6\resources\lumber.png",
-    "grain" : "..\team-6\resources\grain.png",
-    "brick" : "..\team-6\resources\brick.png",
-    "ore" : "..\team-6\resources\ore.png",
-    "desert" : "..\team-6\resources\desert.png"
+    "wool" : "../resources/wool.png",
+    "lumber" : "../resources/lumber.png",
+    "grain" : "../resources/grain.png",
+    "brick" : "../resources/brick.png",
+    "ore" : "../resources/ore.png",
+    "desert" : "../resources/desert.png"
 }
 Color = {
     "wool" : (255, 255, 255),
