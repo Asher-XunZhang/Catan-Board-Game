@@ -9,9 +9,12 @@ class Board:
     def __init__(self, surface):
         side = min(surface.get_width(), surface.get_height())*3/4
         self.surface = pygame.Surface((side, side))
+        self.hexes = []
         self.draw_board()
+        self.calc_settlement_points()
         self.surface.set_colorkey((0,0,0))
         surface.blit(self.surface, blit_position_transfer(surface, self.surface))
+
 
 
     def draw_board(self):
@@ -26,7 +29,7 @@ class Board:
         random.shuffle(element)
         random.shuffle(element)
         element.insert(9, "desert")
-        print(element)
+        # print(element)
         num = [2] + [12] + [3, 4, 5, 6, 8, 9, 10, 11] * 2
         random.shuffle(num)
         random.shuffle(num)
@@ -53,3 +56,32 @@ class Board:
 
     def hexes_infos(self):
         return self.hexes
+
+    # Find settle points
+    def calc_settlement_points(self):
+
+        self.settlement_points = []
+        hex_points_board = []
+        # Obtain all corner points
+        for i in self.hexes:
+            hex_points = i.get_corner()
+            for j in hex_points:
+                points_x = (j[0] + i.position[0])
+                points_y = (j[1] + i.position[1])
+                hex_points_board.append((points_x, points_y))
+
+        # Delete corner points duplicates
+        for corner_t in hex_points_board:
+            add = True
+            if (len(self.settlement_points) > 0):
+                for sett_t in self.settlement_points:
+
+                    if abs(sett_t[0] - corner_t[0]) < 2 and abs(sett_t[1] - corner_t[1]) < 2:
+                        add = False
+            if (add):
+                self.settlement_points.append(corner_t)
+
+        for i in self.settlement_points:
+            pygame.draw.circle(self.surface, (0, 0, 255), i, 12)
+
+        print(len(self.settlement_points))

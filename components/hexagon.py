@@ -2,30 +2,28 @@ from math import sin, cos, pi, ceil,floor,radians
 import pygame
 from calculation import *
 
-
-Image = {
-    "wool"    : "../resources/wool.png",
-    "lumber"  : "../resources/lumber.png",
-    "grain"   : "../resources/grain.png",
-    "brick"   : "../resources/brick.png",
-    "ore"     : "../resources/ore.png",
-    "hill"    : "../resources/brick.png",
-    "forest"  : "../resources/lumber.png",
-    "field"   : "../resources/grain.png",
-    "mountain": "../resources/ore.png",
-    "pasture" : "../resources/wool.png",
-    "desert"  : "../resources/desert.png",
-}
-Color = {
-    "pasture" : (124,252,  0),
-    "forest"  : (153, 76,  0),
-    "field"   : (255,128,  0),
-    "hill"    : (178, 34, 34),  #(205, 92, 92),
-    "mountain": (192,192,192), #(224,224,224),
-    "desert"  : (255,215,  0)
-}
-
 class Hexagon:
+    Image = {
+        "wool": "../resources/img/wool.png",
+        "lumber": "../resources/img/lumber.png",
+        "grain": "../resources/img/grain.png",
+        "brick": "../resources/img/brick.png",
+        "ore": "../resources/img/ore.png",
+        "hill": "../resources/img/brick.png",
+        "forest": "../resources/img/lumber.png",
+        "field": "../resources/img/grain.png",
+        "mountain": "../resources/img/ore.png",
+        "pasture": "../resources/img/wool.png",
+        "desert": "../resources/img/desert.png",
+    }
+    Color = {
+        "pasture": (124, 252, 0),
+        "forest": (153, 76, 0),
+        "field": (255, 128, 0),
+        "hill": (178, 34, 34),  # (205, 92, 92),
+        "mountain": (192, 192, 192),  # (224,224,224),
+        "desert": (255, 215, 0)
+    }
     def __init__(self, surface, id, num, type, hex_side, position):
         self.hex_side = hex_side
         self.surface = pygame.Surface((self.hex_side*2, self.hex_side*2))
@@ -35,11 +33,21 @@ class Hexagon:
         self.num = num
         self.position = position
         self.font = pygame.font.SysFont('Arial', 25)
-        self.image = pygame.image.load(Image[type]).convert_alpha()
-        self.draw_regular_polygon(Color[type], (0, 0))
+        self.image = pygame.image.load(self.Image[type]).convert_alpha()
+        self.draw_regular_polygon(self.Color[type], (0, 0))
         self.surface.set_colorkey((0, 0, 0))
         surface.blit(self.surface, position)
 
+        # Settlement points
+        n, r = 6, self.hex_side
+        x, y = self.surface.get_width() / 2, self.surface.get_height() / 2
+        self.corner_points = [
+            (x + (r + 7) * sin(2 * pi * i / n), y + (r + 7) * cos(2 * pi * i / n))
+            for i in range(n)
+        ]
+
+    def get_corner(self):
+        return self.corner_points
 
     def draw_regular_polygon(self, color, position):
         n, r = 6, self.hex_side
