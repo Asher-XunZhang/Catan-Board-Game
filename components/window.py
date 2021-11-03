@@ -5,6 +5,7 @@ from player import Player
 from robber import Robber
 from button import *
 from dice import *
+from settler import Settler
 
 class Window:
     def __init__(self):
@@ -23,7 +24,13 @@ class Window:
         roll_button.display(screen)
 
         # User input for player color, settlement locations
-        my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
+        # my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
+        # settlement1 = Settler(my_player, Board, (0, 0))
+        # my_player.settlements.append(settlement1)
+        # Hardcode adding settlement to tile for test purposes
+        # hexes[7].settlements.append(settlement1)
+
+
         robber = Robber(board, (0, 0))
         pygame.display.flip()
         while True:
