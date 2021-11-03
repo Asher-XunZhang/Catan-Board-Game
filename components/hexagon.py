@@ -68,5 +68,10 @@ class Hexagon:
             for i in range(n)
         ]
         self.hex = pygame.draw.polygon(self.surface, color, points)
+
+        pygame.draw.circle(self.surface, (255, 255, 255), (x, y + 30), 15)
+        num_text = self.font.render(str(self.num), True, (6, 6, 6))
+        self.surface.blit(num_text, (x - 8, y + 15))
+
         self.image = pygame.transform.scale(self.image, (self.hex_side, self.hex_side))
         self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))

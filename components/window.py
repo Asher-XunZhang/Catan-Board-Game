@@ -30,8 +30,8 @@ class Window:
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
 
-
-        robber = Robber(board, (0, 0))
+        #
+        # robber = Robber(board, (0, 0))
         pygame.display.flip()
         while True:
             clock.tick(20)
@@ -72,7 +72,7 @@ class Window:
                             if total == 7:
                                 # pick new position for robber
                                 new_position = 0
-                                robber.move(new_position)
+                                # robber.move(new_position)
                             else:
                                 for tile in hexes:
                                     # Check for robber, do not increment if present
@@ -85,7 +85,6 @@ class Window:
             pygame.display.update()
 
     def dice_roll(self):
-        # seed(1)
         value1 = randint(1, 6)
         value2 = randint(1, 6)
         return value1, value2

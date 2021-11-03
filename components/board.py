@@ -1,6 +1,7 @@
 from math import sin, cos, pi, sqrt
 import pygame
-from hexagon import Hexagon
+from hexagon import *
+from robber import *
 import random
 from calculation import *
 
@@ -47,6 +48,10 @@ class Board:
                 # self.hexes.append(hex)
             elif( 7 <= i <= 11):
                 hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-7)*2*hex_side + initX - hex_side*2, 4*hex_side+initY-30))
+                if element[i] == "desert":
+                    robber = Robber(self.surface,
+                                    ((i - 7) * 2 * hex_side + initX - hex_side, 5 * hex_side + initY - 25))
+
             elif( 12 <= i <= 15):
                 hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-12)*2*hex_side + initX - hex_side, 6*hex_side+initY-45))
             else:
