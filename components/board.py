@@ -1,6 +1,7 @@
 from math import sin, cos, pi, sqrt
 import pygame
-from hexagon import Hexagon
+from hexagon import *
+from robber import *
 import random
 from calculation import *
 
@@ -16,6 +17,7 @@ class Board:
         surface.blit(self.surface, blit_position_transfer(surface, self.surface))
 
 
+
     def draw_board(self):
         x, y = self.surface.get_width()/2, self.surface.get_height()/2
         side = self.surface.get_width()*4/9
@@ -28,7 +30,7 @@ class Board:
         random.shuffle(element)
         random.shuffle(element)
         element.insert(9, "desert")
-        print(element)
+        # print(element)
         num = [2] + [12] + [3, 4, 5, 6, 8, 9, 10, 11] * 2
         random.shuffle(num)
         random.shuffle(num)
@@ -46,6 +48,10 @@ class Board:
                 # self.hexes.append(hex)
             elif( 7 <= i <= 11):
                 hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-7)*2*hex_side + initX - hex_side*2, 4*hex_side+initY-30))
+                if element[i] == "desert":
+                    robber = Robber(self.surface,
+                                    ((i - 7) * 2 * hex_side + initX - hex_side, 5 * hex_side + initY - 25))
+
             elif( 12 <= i <= 15):
                 hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-12)*2*hex_side + initX - hex_side, 6*hex_side+initY-45))
             else:
