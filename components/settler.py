@@ -1,8 +1,8 @@
 import pygame
 
 class Settler:
-    def __init__(self, owner, surface, position):
-        self.owner = owner
+    def __init__(self, surface, position):
+        self.owner = None
         self.surface = surface
         self.position = position
 

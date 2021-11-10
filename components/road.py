@@ -3,8 +3,8 @@ import pygame
 
 class Road:
 
-    def __init__(self, owner, surface, start, end):
-        self.owner = owner
+    def __init__(self, surface, start, end):
+        self.owner = None
         self.surface = surface
         self.start = start
         self.end = end
