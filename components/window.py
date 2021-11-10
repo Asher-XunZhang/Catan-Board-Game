@@ -87,7 +87,7 @@ class Window:
                             # build/choose settlement
                         elif computer_turn_select == 2:
                             pass
-                            # attempt tradet
+                            # attempt trade
 
 
 
@@ -101,8 +101,7 @@ class Window:
     def search_hexes(self, hexes, total):
         if total == 7:
             # pick new position for robber
-            new_position = 0
-            # robber.move(new_position)
+            pass
         else:
             for tile in hexes:
                 # Check for robber, do not increment if present
