@@ -5,20 +5,18 @@ Player class
 
 
 class Player:
-    def __init__(self, bricks, ore, grain, lumber, wool,
-                 development_cards, settlements, cities, roads,
-                 victory_points, color):
-        self.bricks = bricks
+    def __init__(self, settlements, roads, color):
         self.color = color
-        self.ore = ore
-        self.grain = grain
-        self.lumber = lumber
-        self.wool = wool
-        self.development_cards = development_cards
         self.settlements = settlements
-        self.cities = cities
         self.roads = roads
-        self.victory_points = victory_points
+        self.bricks = 0
+        self.ore = 0
+        self.grain = 0
+        self.lumber = 0
+        self.wool = 0
+        self.development_cards = []
+        self.cities = []
+        self.victory_points = 0
 
     def get_resource_cards(self):
         return self.bricks, self.ore, self.grain, \
