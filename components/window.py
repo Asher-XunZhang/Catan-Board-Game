@@ -5,7 +5,10 @@ from player import Player
 from robber import Robber
 from button import *
 from dice import *
-from settler import Settler
+from settlement import Settlement
+
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
 
 class Window:
     def __init__(self):
@@ -24,7 +27,8 @@ class Window:
         roll_button.display(screen)
 
         # User input for player color, settlement locations
-        # my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
+        my_player = Player([], [], BLUE)
+        computer = Player([], [], RED)
         # settlement1 = Settler(my_player, Board, (0, 0))
         # my_player.settlements.append(settlement1)
         # Hardcode adding settlement to tile for test purposes
@@ -67,20 +71,25 @@ class Window:
                             self.dice_1 = Dice(screen, start_x, start_y)
                             self.dice_2 = Dice(screen, 100 + self.dice_1.position[0], self.dice_1.position[1])
                             asyncio.run(self.dice_roll_animation(num1, num2))
-
                             total = num1 + num2
-                            if total == 7:
-                                # pick new position for robber
-                                new_position = 0
-                                # robber.move(new_position)
-                            else:
-                                for tile in hexes:
-                                    # Check for robber, do not increment if present
-                                    if tile.num == total:
-                                        for settlement in tile.settlements:
-                                            pass
-                                            # settlement.owner.add_single_resources(tile.element)
-                                        # Iterate through cities?
+                            self.search_hexes(hexes, total)
+
+                        # add AI turn
+                        computer_turn_select = randint(0, 5)
+                        comp_num1, comp_num2 = self.dice_roll()
+                        comp_total = comp_num1 + comp_num2
+                        self.search_hexes(hexes, comp_total)
+                        if computer_turn_select == 0:
+                            pass
+                            # build road
+                        elif computer_turn_select == 1:
+                            pass
+                            # build/choose settlement
+                        elif computer_turn_select == 2:
+                            pass
+                            # attempt trade
+
+
 
             pygame.display.update()
 
@@ -88,6 +97,19 @@ class Window:
         value1 = randint(1, 6)
         value2 = randint(1, 6)
         return value1, value2
+
+    def search_hexes(self, hexes, total):
+        if total == 7:
+            # pick new position for robber
+            pass
+        else:
+            for tile in hexes:
+                # Check for robber, do not increment if present
+                if tile.num == total:
+                    for settlement in tile.settlements:
+                        pass
+                        # settlement.owner.add_single_resources(tile.element)
+                    # Iterate through cities?
 
     async def dice_roll_animation(self, num1, num2):
         await asyncio.gather(self.dice_1.roll(num1), self.dice_2.roll(num2))
