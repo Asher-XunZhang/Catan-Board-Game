@@ -8,6 +8,7 @@ from dice import *
 from city import *
 from settlement import Settlement
 
+
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 
