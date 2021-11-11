@@ -49,17 +49,6 @@ class Hexagon:
     def get_corner(self):
         return self.corner_points
 
-        # Settlement points
-        n, r = 6, self.hex_side
-        x, y = self.surface.get_width() / 2, self.surface.get_height() / 2
-        self.corner_points = [
-            (x + (r + 7) * sin(2 * pi * i / n), y + (r + 7) * cos(2 * pi * i / n))
-            for i in range(n)
-        ]
-
-    def get_corner(self):
-        return self.corner_points
-
     def draw_regular_polygon(self, color, position):
         n, r = 6, self.hex_side
         x, y = self.surface.get_width()/2, self.surface.get_height()/2
