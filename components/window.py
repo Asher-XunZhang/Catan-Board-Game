@@ -20,11 +20,16 @@ class Window:
         board = Board(screen)
         hexes = board.hexes_infos()
 
+        test_player = Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, WHITE)
+        test_city = City(test_player, screen, (10, 10))
+
         roll_button_x = 100
         roll_button_y = 600
 
         roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
         roll_button.display(screen)
+
+        robber = Robber(screen, (640, 400))
 
         # User input for player color, settlement locations
         my_player = Player([], [], BLUE)
@@ -34,11 +39,11 @@ class Window:
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
 
-        #
-        # robber = Robber(board, (0, 0))
         pygame.display.flip()
         while True:
             clock.tick(20)
+
+            test_city.draw_city()
 
             # Button hover animation:
             if roll_button.check_click(pygame.mouse.get_pos()):
