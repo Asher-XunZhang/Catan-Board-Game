@@ -5,6 +5,7 @@ from player import Player
 from robber import Robber
 from button import *
 from dice import *
+from city import *
 from settlement import Settlement
 
 BLUE = (0, 0, 255)
@@ -20,7 +21,7 @@ class Window:
         board = Board(screen)
         hexes = board.hexes_infos()
 
-        test_player = Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, WHITE)
+        test_player = Player([], [], BLUE)
         test_city = City(test_player, screen, (10, 10))
 
         roll_button_x = 100
