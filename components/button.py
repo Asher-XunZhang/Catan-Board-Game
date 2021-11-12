@@ -29,9 +29,18 @@ class Button:
 	def check_click(self, position):
 		x_match = position[0] > self.x and position[0] < self.x + self.width
 		y_match = position[1] > self.y and position[1] < self.y + self.height
+		global cursor_state
 		if x_match and y_match:
+			if cursor_state != "hand":
+				cursor_state = "hand"
+				print(cursor_state)
+				pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 			return True
 		else:
+			if cursor_state != "normal":
+				cursor_state = "normal"
+				print(cursor_state)
+				pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 			return False
 
 	def change(self, color=None, text = None):

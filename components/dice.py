@@ -46,6 +46,7 @@ class Dice:
         clock = pygame.time.Clock()
         current_time = pygame.time.get_ticks()
         duration = 600
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_WAIT)
         while pygame.time.get_ticks() < current_time + duration:
             clock.tick(20)
             self.move()

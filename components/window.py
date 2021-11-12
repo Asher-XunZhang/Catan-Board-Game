@@ -40,6 +40,11 @@ class Window:
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
 
+        # set cursor style
+        global cursor_state
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        cursor_state = "normal"
+
         pygame.display.flip()
         while True:
             clock.tick(20)
@@ -74,6 +79,7 @@ class Window:
                         if(operation_board is not None):
                             if operation_board.check_click(pygame.mouse.get_pos()):
                                 num1, num2 = operation_board.roll_dice()
+                                print(cursor_state)
                                 total = num1 + num2
                                 # if total < 7:
                                 #     operation_board = self.remove(operation_board)

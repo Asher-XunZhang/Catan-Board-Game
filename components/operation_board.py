@@ -44,7 +44,10 @@ class OperationBoard:
         value2 = randint(1, 6)
         async def roll_animation():
             await asyncio.gather(dice1.roll(value1), dice2.roll(value2))
+        global cursor_state
+        cursor_state = "wait"
         asyncio.run(roll_animation())
+        print(cursor_state)
         return value1, value2
 
     def draw_board(self):
