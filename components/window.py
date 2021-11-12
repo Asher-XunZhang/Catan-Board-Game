@@ -47,12 +47,12 @@ class Window:
             test_city.draw_city()
 
             # Button hover animation:
-            if(operation_board.button != None):
+            if operation_board is not None:
                 if operation_board.check_click(pygame.mouse.get_pos()):
                     operation_board.change_button_color(RED)
                 else:
                     operation_board.change_button_color(BLACK)
-                pygame.display.update()
+                pygame.display.flip()
 
 
             for event in pygame.event.get():
@@ -71,29 +71,39 @@ class Window:
                     # for test, the above codes should be delete after finishing UI part:
 
                     if pygame.mouse.get_pressed()[0]:
-                        if operation_board.check_click(pygame.mouse.get_pos()):
-                            num1, num2 = operation_board.roll_dice()
-                            total = num1 + num2
-                            self.search_hexes(hexes, total)
+                        if(operation_board is not None):
+                            if operation_board.check_click(pygame.mouse.get_pos()):
+                                num1, num2 = operation_board.roll_dice()
+                                total = num1 + num2
+                                # if total < 7:
+                                #     operation_board = self.remove(operation_board)
+                                self.search_hexes(hexes, total)
 
-                        # add AI turn
-                        computer_turn_select = randint(0, 5)
-                        comp_num1, comp_num2 = self.dice_roll()
-                        comp_total = comp_num1 + comp_num2
-                        self.search_hexes(hexes, comp_total)
-                        if computer_turn_select == 0:
-                            pass
-                            # build road
-                        elif computer_turn_select == 1:
-                            pass
-                            # build/choose settlement
-                        elif computer_turn_select == 2:
-                            pass
-                            # attempt trade
+                            # add AI turn
+                            computer_turn_select = randint(0, 5)
+                            comp_num1, comp_num2 = self.dice_roll()
+                            comp_total = comp_num1 + comp_num2
+                            self.search_hexes(hexes, comp_total)
+                            if computer_turn_select == 0:
+                                pass
+                                # build road
+                            elif computer_turn_select == 1:
+                                pass
+                                # build/choose settlement
+                            elif computer_turn_select == 2:
+                                pass
+                                # attempt trade
 
 
 
             pygame.display.update()
+
+
+    # the surface object must include a "remove" funcition
+    def remove(self, surface):
+        surface.remove()
+        del surface
+        return None
 
     def dice_roll(self):
         value1 = randint(1, 6)
@@ -112,6 +122,7 @@ class Window:
                         pass
                         # settlement.owner.add_single_resources(tile.element)
                     # Iterate through cities?
+
 
 
 

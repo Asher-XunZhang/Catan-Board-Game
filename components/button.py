@@ -22,6 +22,10 @@ class Button:
 		self.super_surface.blit(self.surface, (self.x, self.y))
 		self.super_surface_object.update()
 
+	# def remove(self):
+	# 	self.surface.fill(DARKSKYBLUE)
+	# 	del self
+
 	def check_click(self, position):
 		x_match = position[0] > self.x and position[0] < self.x + self.width
 		y_match = position[1] > self.y and position[1] < self.y + self.height

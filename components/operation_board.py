@@ -37,8 +37,8 @@ class OperationBoard:
         self.update()
 
     def roll_dice(self):
-        dice1 = Dice(self, 1/4, 1/3)
-        dice2 = Dice(self, 3/4, 1/3)
+        dice1 = Dice(self, 1/4, 5/12)
+        dice2 = Dice(self, 3/4, 5/12)
         self.update()
         value1 = randint(1, 6)
         value2 = randint(1, 6)
@@ -53,9 +53,14 @@ class OperationBoard:
     def update(self):
         self.draw_board()
 
-    def clean_board(self):
+    def remove(self):
+        # self.button.remove()
+        # self.button = None
+        del self.button
+        self.button = None
         self.surface.fill(DARKSKYBLUE)
         self.update()
+        del self
 
     def check_click(self, position):
         x = position[0] - self.x
