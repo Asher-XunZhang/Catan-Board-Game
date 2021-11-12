@@ -1,13 +1,14 @@
 from dice import *
 from button import *
 from random import *
+import time
 
-OperationType = {
-    "RollDice":"Roll Dice",
-    "ExchangeResource" : "Exchange",
-    "RobResource": "Rob" ,
-    "FinishTurn" : "Finish"
-}
+# OperationType = {
+#     "RollDice":"Roll Dice",
+#     "ExchangeResource" : "Exchange",
+#     "RobResource": "Rob" ,
+#     "FinishTurn" : "Finish"
+# }
 
 class OperationBoard:
     def __init__(self, surface):
@@ -23,15 +24,17 @@ class OperationBoard:
         self.draw_board()
 
     def change_board_type(self, type):
-        if (type == "RollDice"):
-            self.type = "RollDice"
+        if (type == "Roll"):
+            self.type = "Roll"
             self.button = Button(self, 'Roll Dice', BLACK, 1/2, 3/4)
-        elif (type == "ExchangeResource"):
-            self.type = "ExchangeResource"
-        elif (type == "RobResource"):
+        elif (type == "Trade"):
+            self.button.remove()
+            self.button = Button(self, 'Exchange', BLACK, 1/2, 3/4)
+            self.type = "Trade"
+        elif (type == "Rob"):
             self.type = "RobResource"
-        elif (type == "FinishTurn"):
-            self.type = "FinishTurn"
+        elif (type == "Finish"):
+            self.type = "Finish"
         else:
             self.type = "Init"
         self.update()
@@ -43,15 +46,26 @@ class OperationBoard:
         value1 = randint(1, 6)
         value2 = randint(1, 6)
         async def roll_animation():
+            global cursor_state
+            cursor_state = "wait"
             await asyncio.gather(dice1.roll(value1), dice2.roll(value2))
-        global cursor_state
-        cursor_state = "wait"
         asyncio.run(roll_animation())
-        print(cursor_state)
+        self.button.check_click(pygame.mouse.get_pos())
+
+        # async def waiting_animation():
+        #     await asyncio.sleep(1)
+
+        # asyncio.run(waiting_animation())
+        time.sleep(1)
+        dice1.remove()
+        dice2.remove()
+        self.update()
+
         return value1, value2
 
     def draw_board(self):
-        self.super_surface.blit(self.surface, (self.x, self.y))
+        rect = self.super_surface.blit(self.surface, (self.x, self.y))
+        pygame.display.update(rect)
 
     def update(self):
         self.draw_board()
@@ -72,11 +86,9 @@ class OperationBoard:
 
     def change_button_text(self, text):
         self.button.change(text = text)
-        # self.update()
 
     def change_button_color(self, color):
         self.button.change(color = color)
-        # self.update()
 
 
 

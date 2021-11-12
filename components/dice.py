@@ -42,6 +42,10 @@ class Dice:
         self.super_surface.blit(self.surface, (self.x, self.y))
         self.super_surface_object.update()
 
+    def remove(self):
+        self.surface.fill(LIGHTBLUE)
+        self.update()
+
     async def roll(self, value):
         clock = pygame.time.Clock()
         current_time = pygame.time.get_ticks()
@@ -51,7 +55,6 @@ class Dice:
             clock.tick(20)
             self.move()
             await asyncio.sleep(0.001)
-            pygame.display.update()
         self.stop(value)
 
     def move(self):

@@ -22,9 +22,13 @@ class Button:
 		self.super_surface.blit(self.surface, (self.x, self.y))
 		self.super_surface_object.update()
 
-	# def remove(self):
-	# 	self.surface.fill(DARKSKYBLUE)
-	# 	del self
+	def update(self):
+		self.display()
+		self.super_surface_object.update()
+
+	def remove(self):
+		self.surface.fill(LIGHTBLUE)
+		self.update()
 
 	def check_click(self, position):
 		x_match = position[0] > self.x and position[0] < self.x + self.width
@@ -33,13 +37,11 @@ class Button:
 		if x_match and y_match:
 			if cursor_state != "hand":
 				cursor_state = "hand"
-				print(cursor_state)
 				pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 			return True
 		else:
 			if cursor_state != "normal":
 				cursor_state = "normal"
-				print(cursor_state)
 				pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 			return False
 

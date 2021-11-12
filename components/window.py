@@ -8,7 +8,7 @@ from dice import *
 from city import *
 from color import *
 from settlement import Settlement
-from operation_board import OperationBoard, OperationType
+from operation_board import OperationBoard
 
 
 
@@ -28,7 +28,8 @@ class Window:
         test_city = City(test_player, screen, (10, 10))
 
         operation_board = OperationBoard(screen)
-        operation_board.change_board_type("RollDice")
+        operation_board.change_board_type("Roll")
+        # operation_board.change_board_type("Trade")
 
         robber = Robber(screen, (640, 400))
 
@@ -44,7 +45,7 @@ class Window:
         global cursor_state
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         cursor_state = "normal"
-
+        newcolor = BLACK
         pygame.display.flip()
         while True:
             clock.tick(20)
@@ -54,11 +55,11 @@ class Window:
             # Button hover animation:
             if operation_board is not None:
                 if operation_board.check_click(pygame.mouse.get_pos()):
-                    operation_board.change_button_color(RED)
+                    newcolor = RED
                 else:
-                    operation_board.change_button_color(BLACK)
-                pygame.display.flip()
-
+                    newcolor = BLACK
+            if operation_board.button.color != newcolor:
+                operation_board.change_button_color(newcolor)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -77,9 +78,8 @@ class Window:
 
                     if pygame.mouse.get_pressed()[0]:
                         if(operation_board is not None):
-                            if operation_board.check_click(pygame.mouse.get_pos()):
+                            if (operation_board.type == "Roll") & operation_board.check_click(pygame.mouse.get_pos()):
                                 num1, num2 = operation_board.roll_dice()
-                                print(cursor_state)
                                 total = num1 + num2
                                 # if total < 7:
                                 #     operation_board = self.remove(operation_board)
