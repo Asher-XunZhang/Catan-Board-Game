@@ -47,10 +47,10 @@ class Window:
             test_city.draw_city()
 
             # Button hover animation:
-            if(operation_board.type != "Init"):
-                if (operation_board.check_click(pygame.mouse.get_pos()) & (operation_board.button.color != RED)):
+            if(operation_board.button != None):
+                if operation_board.check_click(pygame.mouse.get_pos()):
                     operation_board.change_button_color(RED)
-                elif operation_board.button.color != BLACK:
+                else:
                     operation_board.change_button_color(BLACK)
                 pygame.display.update()
 
@@ -67,12 +67,11 @@ class Window:
                     # for test, should be delete after finishing UI part:
                     xMouse = event.pos[0]
                     yMouse = event.pos[1]
-                    print(xMouse, yMouse)
+                    # print(xMouse, yMouse)
                     # for test, the above codes should be delete after finishing UI part:
 
                     if pygame.mouse.get_pressed()[0]:
                         if operation_board.check_click(pygame.mouse.get_pos()):
-                            print("Clicked")
                             num1, num2 = operation_board.roll_dice()
                             total = num1 + num2
                             self.search_hexes(hexes, total)
