@@ -1,0 +1,13 @@
+# stores colors for the game
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
+DARKSKYBLUE = (0, 191, 255)
+LIGHTBLUE = (135,206,250)
+WHITE = (255, 255, 255)
+BLACK = (1, 1, 1)
+PURPLE = (128, 0, 128)
+ORANGE = (255, 165, 0)
+BROWN = (165, 42, 42)
+GRAY = (128, 128, 128)

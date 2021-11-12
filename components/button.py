@@ -1,23 +1,21 @@
 import pygame
+from color import *
 
-
-
-WHITE = (255, 255, 255)
-BLACK = (1, 1, 1)
-RED = (255, 0, 0)
-
-class Button(object):
-	def __init__(self, text, color, x, y):
-		# font = pygame.font.SysFont('Arial', 36)
-		font = pygame.font.Font('../resources/font/OpenSans-Semibold.ttf', 28)
-		self.surface = font.render(text, True, color)
+class Button:
+	def __init__(self, surface, text, color, position):
+		self.font = pygame.font.Font('../resources/font/OpenSans-Semibold.ttf', 28)
+		self.super_surface = surface
+		self.text = text
+		self.color = color
+		self.surface = self.font.render(self.text, True, self.color)
 		self.WIDTH = self.surface.get_width()
 		self.HEIGHT = self.surface.get_height()
-		self.x = x
-		self.y = y
+		self.x = position[0]
+		self.y = position[1]
+		self.display()
 
-	def display(self, surface):
-		surface.blit(self.surface, (self.x, self.y))
+	def display(self):
+		self.super_surface.blit(self.surface, (self.x, self.y))
 
 	def check_click(self, position):
 		x_match = position[0] > self.x and position[0] < self.x + self.WIDTH
@@ -26,3 +24,13 @@ class Button(object):
 			return True
 		else:
 			return False
+
+	def change(self, color=None, text = None):
+		if color:
+			self.color = color
+		if text:
+			self.text = text
+		print(self.text)
+		print(self.color)
+		self.surface = self.font.render(self.text, True, self.color)
+		self.display()
