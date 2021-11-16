@@ -1,5 +1,3 @@
-# TODO: clean up button display functions. May not all be needed.
-
 import pygame, sys, math
 
 WHITE = (255, 255, 255)
@@ -23,6 +21,7 @@ class Button(object):
 	def display_button_text(self, surface):
 		surface.blit(self.surface_text, (self.x, self.y))
 
+	Display settlement circle button
 	def display_settlement_button(self, surface, hover):
 		if hover:
 			pygame.draw.circle(surface, self.hover_color, ((self.x), (self.y)), 10)
