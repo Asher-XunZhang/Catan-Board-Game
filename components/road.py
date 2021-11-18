@@ -10,17 +10,22 @@ class Road:
         self.end = end
         self.width = 4
 
+
+
     def draw_road(self):
-        pygame.draw.line(self.surface, self.owner.color, self.start, self.end, self.width)
+        road = pygame.line(self.surface,
+                           self.owner.color,
+                           [self.start[0], self.start[1]],
+                           [self.end[0], self.end[1]],
+                           self.width)
+        pygame.draw.line(road)
 
     def assign_player(self, player):
         self.owner = player
 
-    # def check_click(self, x, y):
-    #     x_match = self.start < x < self.end + self.width
-    #     y_match = self.start < y < self.end + self.HEIGHT
-    #     if x_match and y_match:
-    #         return True
-    #     else:
-    #         return False
+    def check_click(self, position):
+        if pygame.rect.collidepoint(position[0], position[1]):
+            return True
+        else:
+            return False
 
