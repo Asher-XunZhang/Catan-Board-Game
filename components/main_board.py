@@ -1,19 +1,20 @@
 from math import sin, cos, pi, sqrt
 import pygame
+from color import *
 from hexagon import *
 from robber import *
 import random
 from calculation import *
 
 
-class Board:
+class MainBoard:
     def __init__(self, surface):
         side = min(surface.get_width(), surface.get_height())*3/4
         self.surface = pygame.Surface((side, side))
         self.hexes = []
         self.draw_board()
         self.calc_settlement_points()
-        self.surface.set_colorkey((0,0,0))
+        self.surface.set_colorkey((0, 0, 0))
         surface.blit(self.surface, blit_position_transfer(surface, self.surface))
 
 
@@ -21,7 +22,7 @@ class Board:
     def draw_board(self):
         x, y = self.surface.get_width()/2, self.surface.get_height()/2
         side = self.surface.get_width()*4/9
-        self.hex = pygame.draw.polygon(self.surface, (135,206,250), [
+        self.hex = pygame.draw.polygon(self.surface, LIGHTBLUE, [
             (x + side * cos(2 * pi * i / 6),y + side * sin(2 * pi * i / 6))
             for i in range(6)
         ])
@@ -87,6 +88,6 @@ class Board:
                 self.settlement_points.append(corner_t)
 
         for i in self.settlement_points:
-            pygame.draw.circle(self.surface, (0, 0, 255), i, 12)
+            pygame.draw.circle(self.surface, BLUE, i, 12)
 
-        print(len(self.settlement_points))
+        # print(len(self.settlement_points))
