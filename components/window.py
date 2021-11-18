@@ -1,35 +1,33 @@
 import pygame
-from main_board import MainBoard
+from board import Board
 from random import *
 from player import Player
 from robber import Robber
 from button import *
 from dice import *
-from city import *
-from color import *
 from settlement import Settlement
-from operation_board import OperationBoard
 
-
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
 
 class Window:
     def __init__(self):
         pygame.init()
         clock = pygame.time.Clock()
-        scree_hight = 800
-        screen_width = 1280
-        screen = pygame.display.set_mode((screen_width, scree_hight))
+        screen = pygame.display.set_mode((1280, 800))
         screen.fill((0, 191, 255))
         pygame.display.set_caption("Catan")
-        board = MainBoard(screen)
+        board = Board(screen)
         hexes = board.hexes_infos()
 
-        test_player = Player([], [], BLUE)
+        test_player = Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, WHITE)
         test_city = City(test_player, screen, (10, 10))
 
-        operation_board = OperationBoard(screen)
-        operation_board.change_board_type("Roll")
-        # operation_board.change_board_type("Trade")
+        roll_button_x = 100
+        roll_button_y = 600
+
+        roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
+        roll_button.display(screen)
 
         robber = Robber(screen, (640, 400))
 
@@ -41,11 +39,6 @@ class Window:
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
 
-        # set cursor style
-        global cursor_state
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        cursor_state = "normal"
-        newcolor = BLACK
         pygame.display.flip()
         while True:
             clock.tick(20)
@@ -53,13 +46,12 @@ class Window:
             test_city.draw_city()
 
             # Button hover animation:
-            if operation_board is not None:
-                if operation_board.check_click(pygame.mouse.get_pos()):
-                    newcolor = RED
-                else:
-                    newcolor = BLACK
-            if operation_board.button.color != newcolor:
-                operation_board.change_button_color(newcolor)
+            if roll_button.check_click(pygame.mouse.get_pos()):
+                roll_button = Button('Roll Dice', BLACK, roll_button_x, roll_button_y)
+            else:
+                roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
+            roll_button.display(screen)
+            pygame.display.update()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -77,39 +69,34 @@ class Window:
                     # for test, the above codes should be delete after finishing UI part:
 
                     if pygame.mouse.get_pressed()[0]:
-                        if(operation_board is not None):
-                            if (operation_board.type == "Roll") & operation_board.check_click(pygame.mouse.get_pos()):
-                                num1, num2 = operation_board.roll_dice()
-                                total = num1 + num2
-                                # if total < 7:
-                                #     operation_board = self.remove(operation_board)
-                                self.search_hexes(hexes, total)
+                        if roll_button.check_click(pygame.mouse.get_pos()):
+                            num1, num2 = self.dice_roll()
+                            start_x = roll_button.x + roll_button.WIDTH/2 - 100
+                            start_y = roll_button.y - 100
+                            self.dice_1 = Dice(screen, start_x, start_y)
+                            self.dice_2 = Dice(screen, 100 + self.dice_1.position[0], self.dice_1.position[1])
+                            asyncio.run(self.dice_roll_animation(num1, num2))
+                            total = num1 + num2
+                            self.search_hexes(hexes, total)
 
-                            # add AI turn
-                            computer_turn_select = randint(0, 5)
-                            comp_num1, comp_num2 = self.dice_roll()
-                            comp_total = comp_num1 + comp_num2
-                            self.search_hexes(hexes, comp_total)
-                            if computer_turn_select == 0:
-                                pass
-                                # build road
-                            elif computer_turn_select == 1:
-                                pass
-                                # build/choose settlement
-                            elif computer_turn_select == 2:
-                                pass
-                                # attempt trade
+                        # add AI turn
+                        computer_turn_select = randint(0, 5)
+                        comp_num1, comp_num2 = self.dice_roll()
+                        comp_total = comp_num1 + comp_num2
+                        self.search_hexes(hexes, comp_total)
+                        if computer_turn_select == 0:
+                            pass
+                            # build road
+                        elif computer_turn_select == 1:
+                            pass
+                            # build/choose settlement
+                        elif computer_turn_select == 2:
+                            pass
+                            # attempt trade
 
 
 
             pygame.display.update()
-
-
-    # the surface object must include a "remove" funcition
-    def remove(self, surface):
-        surface.remove()
-        del surface
-        return None
 
     def dice_roll(self):
         value1 = randint(1, 6)
@@ -129,6 +116,8 @@ class Window:
                         # settlement.owner.add_single_resources(tile.element)
                     # Iterate through cities?
 
+    async def dice_roll_animation(self, num1, num2):
+        await asyncio.gather(self.dice_1.roll(num1), self.dice_2.roll(num2))
 
 
 
