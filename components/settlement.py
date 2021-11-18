@@ -1,7 +1,6 @@
 import pygame
 
-
-# TODO: more functions
+#TODO: more functions
 
 class Settlement:
     def __init__(self, surface, position):
@@ -17,6 +16,5 @@ class Settlement:
 
     # Function to clear colors using blit
     """ TESTING WITH RED should be  (255, 255, 255, 128)"""
-
     def clear_settlement(self):
         pygame.draw.rect(self.surface, (255, 0, 0), self.position, 2)
