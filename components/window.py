@@ -6,6 +6,7 @@ from robber import Robber
 from button import *
 from dice import *
 from settlement import Settlement
+from city import *
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -20,26 +21,34 @@ class Window:
         board = Board(screen)
         hexes = board.hexes_infos()
 
-        test_player = Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, WHITE)
+        test_player = Player([], [], BLUE)
         test_city = City(test_player, screen, (10, 10))
 
+        # Create buttons
         roll_button_x = 100
         roll_button_y = 600
-
-        roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
-        roll_button.display(screen)
+        roll_button = Button('Roll Dice', WHITE, BLACK, roll_button_x, roll_button_y)
+        roll_button.display_button_text(screen)
 
         robber = Robber(screen, (640, 400))
 
         # User input for player color, settlement locations
-        my_player = Player([], [], BLUE)
-        computer = Player([], [], RED)
+        # my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
+        # settlement1 = Settler(my_player, Board, (0, 0))
+        # my_player.settlements.append(settlement1)
+        # Hardcode adding settlement to tile for test purposes
+        # hexes[7].settlements.append(settlement1)
+        # User input for player color, settlement locations
+        # my_player = Player(0, 0, 0, 0, 0, [], [], [], [], 0, "blue")
         # settlement1 = Settler(my_player, Board, (0, 0))
         # my_player.settlements.append(settlement1)
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
 
+        # robber = Robber(board, (0, 0))
+
         pygame.display.flip()
+        board_sett_buttons = board.get_sett_buttons()
         while True:
             clock.tick(20)
 
@@ -47,10 +56,23 @@ class Window:
 
             # Button hover animation:
             if roll_button.check_click(pygame.mouse.get_pos()):
-                roll_button = Button('Roll Dice', BLACK, roll_button_x, roll_button_y)
+                roll_button = Button('Roll Dice', BLACK, RED, roll_button_x, roll_button_y)
             else:
-                roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
-            roll_button.display(screen)
+                roll_button = Button('Roll Dice', WHITE, RED, roll_button_x, roll_button_y)
+            roll_button.display_button_text(screen)
+
+            # Settlement button operations. Checks for cursor hover and clicks and changes color
+            for butts in board_sett_buttons:
+                hover = False
+                buttx = butts.get_pos()[0]
+                butty = butts.get_pos()[1]
+                if (buttx - 7 <= pygame.mouse.get_pos()[0] <= buttx + 7) and (
+                        butty - 7 <= pygame.mouse.get_pos()[1] <= butty + 7):
+                    if pygame.mouse.get_pressed()[0]:
+                        butts.change_button_color(BLACK, WHITE)
+
+                    hover = True
+                butts.display_settlement_button(screen, hover)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -78,6 +100,19 @@ class Window:
                             asyncio.run(self.dice_roll_animation(num1, num2))
                             total = num1 + num2
                             self.search_hexes(hexes, total)
+
+                            if total == 7:
+                                # pick new position for robber
+                                new_position = 0
+                                # robber.move(new_position)
+                            else:
+                                for tile in hexes:
+                                    # Check for robber, do not increment if present
+                                    if tile.num == total:
+                                        for settlement in tile.settlements:
+                                            pass
+                                            # settlement.owner.add_single_resources(tile.element)
+                                        # Iterate through cities?
 
                         # add AI turn
                         computer_turn_select = randint(0, 5)
@@ -115,6 +150,11 @@ class Window:
                         pass
                         # settlement.owner.add_single_resources(tile.element)
                     # Iterate through cities?
+
+    def dice_roll(self):
+        value1 = randint(1, 6)
+        value2 = randint(1, 6)
+        return value1, value2
 
     async def dice_roll_animation(self, num1, num2):
         await asyncio.gather(self.dice_1.roll(num1), self.dice_2.roll(num2))
