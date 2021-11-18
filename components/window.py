@@ -5,9 +5,7 @@ from player import Player
 from robber import Robber
 from button import *
 from dice import *
-from settler import Settler
-from city import *
-
+from settlement import Settlement
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
