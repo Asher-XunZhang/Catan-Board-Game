@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from board import Board
 from random import *
@@ -5,10 +7,12 @@ from player import Player
 from robber import Robber
 from button import *
 from dice import *
+from city import *
 from settlement import Settlement
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+
 
 class Window:
     def __init__(self):
@@ -20,26 +24,30 @@ class Window:
         board = Board(screen)
         hexes = board.hexes_infos()
 
-        test_player = Player(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, WHITE)
+        test_player = Player([], [], BLUE)
         test_city = City(test_player, screen, (10, 10))
 
         roll_button_x = 100
         roll_button_y = 600
 
-        roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
-        roll_button.display(screen)
+        roll_button = Button('Roll Dice', WHITE, WHITE, roll_button_x, roll_button_y)
+        roll_button.display_button_text(screen)
 
         robber = Robber(screen, (640, 400))
 
-        # User input for player color, settlement locations
-        my_player = Player([], [], BLUE)
-        computer = Player([], [], RED)
-        # settlement1 = Settler(my_player, Board, (0, 0))
-        # my_player.settlements.append(settlement1)
-        # Hardcode adding settlement to tile for test purposes
-        # hexes[7].settlements.append(settlement1)
-
         pygame.display.flip()
+        board_sett_buttons = board.get_sett_buttons()
+        for i in range(len(board_sett_buttons)):
+            settle = Settlement(screen, board_sett_buttons[i].get_pos())
+            for j in range(len(hexes)):
+                distance = math.sqrt((settle.get_position()[0] - hexes[j].position[0])**2 +
+                                      (settle.get_position()[1] - hexes[j].position[1])**2)
+
+                if distance < 230:
+                    hexes[j].settlements.append(settle)
+                    print(str(hexes[j].position[0]) + ", " + str(hexes[j].position[1]))
+                    print(settle.get_position())
+                    print("\n")
         while True:
             clock.tick(20)
 
@@ -47,10 +55,26 @@ class Window:
 
             # Button hover animation:
             if roll_button.check_click(pygame.mouse.get_pos()):
-                roll_button = Button('Roll Dice', BLACK, roll_button_x, roll_button_y)
+                roll_button = Button('Roll Dice', BLACK, WHITE, roll_button_x, roll_button_y)
             else:
-                roll_button = Button('Roll Dice', WHITE, roll_button_x, roll_button_y)
-            roll_button.display(screen)
+                roll_button = Button('Roll Dice', WHITE, WHITE, roll_button_x, roll_button_y)
+            roll_button.display_button_text(screen)
+            pygame.display.update()
+
+            # Settlement button operations. Checks for cursor hover and clicks and changes color
+            for butts in board_sett_buttons:
+                hover = False
+                buttx = butts.get_pos()[0]
+                butty = butts.get_pos()[1]
+                if (buttx - 7 <= pygame.mouse.get_pos()[0] <= buttx + 7) and (
+                        butty - 7 <= pygame.mouse.get_pos()[1] <= butty + 7):
+                    if pygame.mouse.get_pressed()[0]:
+                        butts.change_button_color(BLACK, WHITE)
+                        for tile in hexes:
+                            print("We did it 1")
+
+                    hover = True
+                butts.display_settlement_button(screen, hover)
             pygame.display.update()
 
             for event in pygame.event.get():
@@ -65,13 +89,14 @@ class Window:
                     # for test, should be delete after finishing UI part:
                     xMouse = event.pos[0]
                     yMouse = event.pos[1]
+                    print(str(xMouse) + ", " + str(yMouse))
                     # print(xMouse, yMouse)
                     # for test, the above codes should be delete after finishing UI part:
 
                     if pygame.mouse.get_pressed()[0]:
                         if roll_button.check_click(pygame.mouse.get_pos()):
                             num1, num2 = self.dice_roll()
-                            start_x = roll_button.x + roll_button.WIDTH/2 - 100
+                            start_x = roll_button.x + roll_button.WIDTH / 2 - 100
                             start_y = roll_button.y - 100
                             self.dice_1 = Dice(screen, start_x, start_y)
                             self.dice_2 = Dice(screen, 100 + self.dice_1.position[0], self.dice_1.position[1])
@@ -94,8 +119,6 @@ class Window:
                             pass
                             # attempt trade
 
-
-
             pygame.display.update()
 
     def dice_roll(self):
@@ -112,14 +135,12 @@ class Window:
                 # Check for robber, do not increment if present
                 if tile.num == total:
                     for settlement in tile.settlements:
-                        pass
-                        # settlement.owner.add_single_resources(tile.element)
+                        #settlement.owner.add_single_resources(tile.element)
+                        print("We did it 2")
                     # Iterate through cities?
 
     async def dice_roll_animation(self, num1, num2):
         await asyncio.gather(self.dice_1.roll(num1), self.dice_2.roll(num2))
-
-
 
 
 if __name__ == '__main__':

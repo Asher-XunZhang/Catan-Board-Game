@@ -2,6 +2,8 @@ from math import sin, cos, pi, sqrt
 import pygame
 from hexagon import *
 from robber import *
+from button import *
+from settlement import *
 import random
 from calculation import *
 
@@ -9,14 +11,17 @@ from calculation import *
 class Board:
     def __init__(self, surface):
         side = min(surface.get_width(), surface.get_height())*3/4
+        self.pos = side
         self.surface = pygame.Surface((side, side))
+        self.x = 0
+        self.y = 0
+        self.settlement_buttons = []
         self.hexes = []
         self.draw_board()
+        self.settlement_points = []
         self.calc_settlement_points()
         self.surface.set_colorkey((0,0,0))
         surface.blit(self.surface, blit_position_transfer(surface, self.surface))
-
-
 
     def draw_board(self):
         x, y = self.surface.get_width()/2, self.surface.get_height()/2
@@ -58,6 +63,8 @@ class Board:
                 hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-16)*2*hex_side + initX, 8*hex_side+initY-60))
             self.hexes.append(hex)
 
+    def get_sett_buttons(self):
+        return self.settlement_buttons
 
     def hexes_infos(self):
         return self.hexes
@@ -70,9 +77,10 @@ class Board:
         # Obtain all corner points
         for i in self.hexes:
             hex_points = i.get_corner()
+            # Give hex to settlements
             for j in hex_points:
-                points_x = (j[0] + i.position[0])
-                points_y = (j[1] + i.position[1])
+                points_x = (j[0] + i.position[0] + 340)
+                points_y = (j[1] + i.position[1] + 100)
                 hex_points_board.append((points_x, points_y))
 
         # Delete corner points duplicates
@@ -86,7 +94,10 @@ class Board:
             if (add):
                 self.settlement_points.append(corner_t)
 
+        # Add settlement buttons to board
         for i in self.settlement_points:
-            pygame.draw.circle(self.surface, (0, 0, 255), i, 12)
-
+            new_sett_button = Button('', (0, 191, 255), (200, 250, 250), (i[0]), (i[1]))
+            self.settlement_buttons.append(new_sett_button)
         print(len(self.settlement_points))
+        print(self.settlement_points)
+

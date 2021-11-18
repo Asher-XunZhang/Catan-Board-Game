@@ -20,3 +20,6 @@ class Settlement:
 
     def clear_settlement(self):
         pygame.draw.rect(self.surface, (255, 0, 0), self.position, 2)
+
+    def get_position(self):
+        return self.position
