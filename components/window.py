@@ -21,8 +21,8 @@ class Window:
         screen = pygame.display.set_mode((screen_width, scree_hight))
         screen.fill((0, 191, 255))
         pygame.display.set_caption("Catan")
-        board = MainBoard(screen)
-        hexes = board.hexes_infos()
+        main_board = MainBoard(screen)
+        hexes = main_board.hexes_infos()
 
         test_player = Player([], [], BLUE)
         test_city = City(test_player, screen, (10, 10))
@@ -40,26 +40,29 @@ class Window:
         # my_player.settlements.append(settlement1)
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
-
+        test = 0
         # set cursor style
         global cursor_state
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         cursor_state = "normal"
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         newcolor = BLACK
         pygame.display.flip()
         while True:
             clock.tick(20)
 
             test_city.draw_city()
-
-            # Button hover animation:
-            if operation_board is not None:
-                if operation_board.check_click(pygame.mouse.get_pos()):
-                    newcolor = RED
+            if (operation_board is not None):
+                if operation_board.type == "Init":
+                    operation_board.remove()
                 else:
-                    newcolor = BLACK
-            if operation_board.button.color != newcolor:
-                operation_board.change_button_color(newcolor)
+                    # Button hover animation:
+                    if (operation_board.button is not None) :
+                        if operation_board.check_click(pygame.mouse.get_pos()):
+                            newcolor = RED
+                        else:
+                            newcolor = BLACK
+                        if operation_board.button.color != newcolor:
+                            operation_board.change_button_color(newcolor)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -78,29 +81,35 @@ class Window:
 
                     if pygame.mouse.get_pressed()[0]:
                         if(operation_board is not None):
-                            if (operation_board.type == "Roll") & operation_board.check_click(pygame.mouse.get_pos()):
-                                num1, num2 = operation_board.roll_dice()
-                                total = num1 + num2
-                                # if total < 7:
-                                #     operation_board = self.remove(operation_board)
-                                self.search_hexes(hexes, total)
 
-                            # add AI turn
-                            computer_turn_select = randint(0, 5)
-                            comp_num1, comp_num2 = self.dice_roll()
-                            comp_total = comp_num1 + comp_num2
-                            self.search_hexes(hexes, comp_total)
-                            if computer_turn_select == 0:
-                                pass
-                                # build road
-                            elif computer_turn_select == 1:
-                                pass
-                                # build/choose settlement
-                            elif computer_turn_select == 2:
-                                pass
-                                # attempt trade
+                            if (operation_board.type == "Roll"):
+                               if (operation_board.check_click(pygame.mouse.get_pos())):
+                                    num1, num2 = operation_board.roll_dice()
+                                    hexes[test].change_num_color(RED)
+                                    test+=1
 
 
+
+                                    total = num1 + num2
+                                    # if total < 7:
+                                    #     operation_board = self.remove(operation_board)
+                                    self.search_hexes(hexes, total)
+
+                            else:
+                                # add AI turn
+                                computer_turn_select = randint(0, 5)
+                                comp_num1, comp_num2 = self.dice_roll()
+                                comp_total = comp_num1 + comp_num2
+                                self.search_hexes(hexes, comp_total)
+                                if computer_turn_select == 0:
+                                    pass
+                                    # build road
+                                elif computer_turn_select == 1:
+                                    pass
+                                    # build/choose settlement
+                                elif computer_turn_select == 2:
+                                    pass
+                                    # attempt trade
 
             pygame.display.update()
 

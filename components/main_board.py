@@ -10,12 +10,15 @@ from calculation import *
 class MainBoard:
     def __init__(self, surface):
         side = min(surface.get_width(), surface.get_height())*3/4
+        self.super_surface = surface
         self.surface = pygame.Surface((side, side))
+        self.surface.set_colorkey((0, 0, 0))
         self.hexes = []
+        self.settlement_points = []
         self.draw_board()
         self.calc_settlement_points()
-        self.surface.set_colorkey((0, 0, 0))
-        surface.blit(self.surface, blit_position_transfer(surface, self.surface))
+        self.draw_settlement_points()
+        self.update()
 
 
 
@@ -42,22 +45,21 @@ class MainBoard:
 
         for i in range(19):
             if(i <= 2):
-                hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-0)*2*hex_side + initX, initY))
-                # self.hexes.append(hex)
+                hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-0)*2*hex_side + initX, initY))
             elif( 3 <= i <= 6):
-                hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-3)*2*hex_side + initX - hex_side, 2*hex_side+initY-15))
-                # self.hexes.append(hex)
+                hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-3)*2*hex_side + initX - hex_side, 2*hex_side+initY-15))
             elif( 7 <= i <= 11):
-                hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-7)*2*hex_side + initX - hex_side*2, 4*hex_side+initY-30))
+                hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-7)*2*hex_side + initX - hex_side*2, 4*hex_side+initY-30))
                 # if element[i] == "desert":
-                #     robber = Robber(self.surface,
+                #     robber = Robber(self.surface, self,
                 #                     ((i - 7) * 2 * hex_side + initX - hex_side, 5 * hex_side + initY - 25))
 
             elif( 12 <= i <= 15):
-                hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-12)*2*hex_side + initX - hex_side, 6*hex_side+initY-45))
+                hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-12)*2*hex_side + initX - hex_side, 6*hex_side+initY-45))
             else:
-                hex = Hexagon(self.surface, i, num[i], element[i], hex_side, ((i-16)*2*hex_side + initX, 8*hex_side+initY-60))
+                hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-16)*2*hex_side + initX, 8*hex_side+initY-60))
             self.hexes.append(hex)
+        sorted(self.hexes, key=lambda x: x.num)
 
 
     def hexes_infos(self):
@@ -65,8 +67,6 @@ class MainBoard:
 
     # Find settle points
     def calc_settlement_points(self):
-
-        self.settlement_points = []
         hex_points_board = []
         # Obtain all corner points
         for i in self.hexes:
@@ -87,7 +87,12 @@ class MainBoard:
             if (add):
                 self.settlement_points.append(corner_t)
 
+    def draw_settlement_points(self):
         for i in self.settlement_points:
             pygame.draw.circle(self.surface, BLUE, i, 12)
 
         # print(len(self.settlement_points))
+
+    def update(self):
+        rect = self.super_surface.blit(self.surface, blit_position_transfer(self.super_surface, self.surface))
+        pygame.display.update(rect)

@@ -24,7 +24,6 @@ class Button:
 
 	def update(self):
 		self.display()
-		self.super_surface_object.update()
 
 	def remove(self):
 		self.surface.fill(LIGHTBLUE)
