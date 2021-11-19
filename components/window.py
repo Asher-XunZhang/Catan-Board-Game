@@ -40,7 +40,7 @@ class Window:
         # my_player.settlements.append(settlement1)
         # Hardcode adding settlement to tile for test purposes
         # hexes[7].settlements.append(settlement1)
-        test = 0
+
         # set cursor style
         global cursor_state
         cursor_state = "normal"
@@ -85,15 +85,14 @@ class Window:
                             if (operation_board.type == "Roll"):
                                if (operation_board.check_click(pygame.mouse.get_pos())):
                                     num1, num2 = operation_board.roll_dice()
-                                    hexes[test].change_num_color(RED)
-                                    test+=1
-
-
-
                                     total = num1 + num2
+                                    for hex in hexes[total]:
+                                        hex.change_num_color(RED)
+                                    # main_board.hexes_shrink(hexes[total])
+
                                     # if total < 7:
                                     #     operation_board = self.remove(operation_board)
-                                    self.search_hexes(hexes, total)
+                                    # self.search_hexes(hexes, total)
 
                             else:
                                 # add AI turn

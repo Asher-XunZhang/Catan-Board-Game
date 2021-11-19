@@ -1,6 +1,7 @@
 from math import sin, cos, pi, ceil,floor,radians
 import pygame
 from color import *
+import asyncio
 from calculation import *
 
 class Hexagon:
@@ -66,6 +67,7 @@ class Hexagon:
 
         self.circle_radius = 30
         self.circle_surface = pygame.Surface((self.circle_radius, self.circle_radius))
+        self.text_color = text_color
         pygame.draw.circle(self.circle_surface, text_color, (self.circle_radius/2 , self.circle_radius/2), 15)
         num_text = self.font.render(str(self.num), True, (6, 6, 6))
         self.circle_surface.blit(num_text, blit_position_transfer(self.circle_surface, num_text))
@@ -74,6 +76,26 @@ class Hexagon:
 
         self.image = pygame.transform.scale(self.image, (self.hex_side, self.hex_side))
         self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
+
+
+    async def shrink(self):
+        clock = pygame.time.Clock()
+        current_time = pygame.time.get_ticks()
+        duration = 600
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_WAIT)
+        while pygame.time.get_ticks() < current_time + duration:
+            clock.tick(20)
+            self.shrink_color()
+            await asyncio.sleep(0.001)
+        self.change_num_color(WHITE)
+
+    def shrink_color(self):
+        if self.text_color == WHITE:
+            self.text_color = RED
+            self.change_num_color(RED)
+        else:
+            self.change_num_color(WHITE)
+        self.update()
 
     def change_num_color(self, color):
         self.draw_regular_polygon(self.Color[self.type], color)
