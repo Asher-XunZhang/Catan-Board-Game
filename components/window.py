@@ -47,6 +47,20 @@ class Window:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         newcolor = BLACK
         pygame.display.flip()
+
+        board_sett_buttons = board.get_sett_buttons()
+        for i in range(len(board_sett_buttons)):
+            settle = Settlement(screen, board_sett_buttons[i].get_pos())
+            for j in range(len(hexes)):
+                distance = math.sqrt((settle.get_position()[0] - hexes[j].position[0])**2 +
+                                      (settle.get_position()[1] - hexes[j].position[1])**2)
+
+                if distance < 230:
+                    hexes[j].settlements.append(settle)
+                    print(str(hexes[j].position[0]) + ", " + str(hexes[j].position[1]))
+                    print(settle.get_position())
+                    print("\n")
+        pygame.display.flip()
         while True:
             clock.tick(20)
 
@@ -63,7 +77,21 @@ class Window:
                             newcolor = BLACK
                         if operation_board.button.color != newcolor:
                             operation_board.change_button_color(newcolor)
+            # Settlement button operations. Checks for cursor hover and clicks and changes color
+            for butts in board_sett_buttons:
+                hover = False
+                buttx = butts.get_pos()[0]
+                butty = butts.get_pos()[1]
+                if (buttx - 7 <= pygame.mouse.get_pos()[0] <= buttx + 7) and (
+                        butty - 7 <= pygame.mouse.get_pos()[1] <= butty + 7):
+                    if pygame.mouse.get_pressed()[0]:
+                        butts.change_button_color(BLACK, WHITE)
+                        for tile in hexes:
+                            print("We did it 1")
 
+                    hover = True
+                butts.display_settlement_button(screen, hover)
+            pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -133,8 +161,8 @@ class Window:
                 # Check for robber, do not increment if present
                 if tile.num == total:
                     for settlement in tile.settlements:
-                        pass
-                        # settlement.owner.add_single_resources(tile.element)
+                        #settlement.owner.add_single_resources(tile.element)
+                        print("We did it 2")
                     # Iterate through cities?
 
 

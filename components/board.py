@@ -3,6 +3,8 @@ import pygame
 from color import *
 from hexagon import *
 from robber import *
+from button import *
+from settlement import *
 import random
 from calculation import *
 
@@ -12,10 +14,11 @@ class MainBoard:
         side = min(surface.get_width(), surface.get_height())*3/4
         self.super_surface = surface
         self.surface = pygame.Surface((side, side))
+        self.settlement_buttons = []
         self.surface.set_colorkey((0, 0, 0))
         self.hexes = []
-        self.settlement_points = []
         self.draw_board()
+        self.settlement_points = []
         self.calc_settlement_points()
         self.draw_settlement_points()
         self.update()
@@ -73,6 +76,8 @@ class MainBoard:
             self.hexes[num[i]].append(hex)
 
 
+    def get_sett_buttons(self):
+        return self.settlement_buttons
 
     def hexes_infos(self):
         return self.hexes
@@ -83,32 +88,32 @@ class MainBoard:
         # Obtain all corner points
         for i in range(2,13):
             for hex in self.hexes[i]:
-                hex_points = hex.get_corner()
+                hex_points = i.get_corner()
+                # Give hex to settlements
                 for j in hex_points:
-                    points_x = (j[0] + hex.position[0])
-                    points_y = (j[1] + hex.position[1])
+                    points_x = (j[0] + hex.position[0] + 340)
+                    points_y = (j[1] + hex.position[1] + 100)
                     hex_points_board.append((points_x, points_y))
-                for corner_t in hex_points_board:
-                    add = True
-                    if (len(self.settlement_points) > 0):
-                        for sett_t in self.settlement_points:
 
-                            if abs(sett_t[0] - corner_t[0]) < 2 and abs(sett_t[1] - corner_t[1]) < 2:
-                                add = False
-                    if (add):
-                        self.settlement_points.append(corner_t)
-        #
-        # # Delete corner points duplicates
-        # for corner_t in hex_points_board:
-        #     add = True
-        #     if (len(self.settlement_points) > 0):
-        #         for sett_t in self.settlement_points:
-        #
-        #             if abs(sett_t[0] - corner_t[0]) < 2 and abs(sett_t[1] - corner_t[1]) < 2:
-        #                 add = False
-        #     if (add):
-        #         self.settlement_points.append(corner_t)
+        # Delete corner points duplicates
+        for corner_t in hex_points_board:
+            add = True
+            if (len(self.settlement_points) > 0):
+                for sett_t in self.settlement_points:
 
+                    if abs(sett_t[0] - corner_t[0]) < 2 and abs(sett_t[1] - corner_t[1]) < 2:
+                        add = False
+            if (add):
+                self.settlement_points.append(corner_t)
+
+        # Add settlement buttons to board
+        for i in self.settlement_points:
+            new_sett_button = Button('', (0, 191, 255), (200, 250, 250), (i[0]), (i[1]))
+            self.settlement_buttons.append(new_sett_button)
+        print(len(self.settlement_points))
+        print(self.settlement_points)
+
+        # print(len(self.settlement_points))
     def draw_settlement_points(self):
         for i in self.settlement_points:
             pygame.draw.circle(self.surface, BLUE, i, 12)

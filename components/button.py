@@ -11,11 +11,15 @@ class Button:
 		self.width = self.surface.get_width()
 		self.height = self.surface.get_height()
 
+		self.color = color
+		self.hover_color = hover_color
+
 		self.super_surface = super_surface_object.surface
 		self.super_surface_object = super_surface_object
 		position = blit_position_transfer(self.super_surface, self.surface, x, y)
 		self.x = position[0]
 		self.y = position[1]
+
 		self.display()
 
 	def display(self):
@@ -53,3 +57,14 @@ class Button:
 		self.width = self.surface.get_width()
 		self.height = self.surface.get_height()
 		self.display()
+
+	# Display settlement circle button
+	def display_settlement_button(self, surface, hover):
+		if hover:
+			pygame.draw.circle(surface, self.hover_color, ((self.x), (self.y)), 10)
+		else:
+			pygame.draw.circle(surface, self.color, ((self.x),(self.y)), 10)
+		playing = True
+
+	def get_pos(self):
+		return [self.x, self.y]
