@@ -141,6 +141,7 @@ class MainBoard:
                 pygame.mouse.set_cursor(pygame.cursors.tri_left)
                 clicked_settlement.change_button_color(BLACK, WHITE)
                 clicked_settlement.display_settlement_button()
+                #TODO: add the player to the hex
             elif cursor_state != "hand":
                 cursor_state = "hand"
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
