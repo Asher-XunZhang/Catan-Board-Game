@@ -1,9 +1,5 @@
-from math import sin, cos, pi, sqrt
-import pygame
-from color import *
 from hexagon import *
 from robber import *
-from button import *
 from settlement import *
 import random
 from calculation import *
