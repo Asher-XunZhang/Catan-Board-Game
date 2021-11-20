@@ -14,13 +14,21 @@ class MainBoard:
         side = min(surface.get_width(), surface.get_height())*3/4
         self.super_surface = surface
         self.surface = pygame.Surface((side, side))
+        position = blit_position_transfer(self.super_surface, self.surface)
+        self.x = position[0]
+        self.y = position[1]
+        self.surface.set_colorkey(TRASPARENT)
+
+
         self.settlement_buttons = []
-        self.surface.set_colorkey((0, 0, 0))
+        self.settlement_points = {}
         self.hexes = []
+
+
         self.draw_board()
-        self.settlement_points = []
         self.calc_settlement_points()
         self.draw_settlement_points()
+
         self.update()
 
 
@@ -37,7 +45,7 @@ class MainBoard:
         random.shuffle(element)
         random.shuffle(element)
         element.insert(9, "desert")
-        # print(element)
+
         num = [2] + [12] + [3, 4, 5, 6, 8, 9, 10, 11] * 2
         random.shuffle(num)
         random.shuffle(num)
@@ -65,10 +73,6 @@ class MainBoard:
                 hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-3)*2*hex_side + initX - hex_side, 2*hex_side+initY-15))
             elif( 7 <= i <= 11):
                 hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-7)*2*hex_side + initX - hex_side*2, 4*hex_side+initY-30))
-                # if element[i] == "desert":
-                #     robber = Robber(self.surface, self,
-                #                     ((i - 7) * 2 * hex_side + initX - hex_side, 5 * hex_side + initY - 25))
-
             elif( 12 <= i <= 15):
                 hex = Hexagon(self.surface, self, i, num[i], element[i], hex_side, ((i-12)*2*hex_side + initX - hex_side, 6*hex_side+initY-45))
             else:
@@ -84,41 +88,68 @@ class MainBoard:
 
     # Find settle points
     def calc_settlement_points(self):
-        hex_points_board = []
+        # hex_points_board = []
+        hex_points_board = {}
         # Obtain all corner points
         for i in range(2,13):
             for hex in self.hexes[i]:
-                hex_points = i.get_corner()
+                hex_points = hex.get_corner()
                 # Give hex to settlements
                 for j in hex_points:
-                    points_x = (j[0] + hex.position[0] + 340)
-                    points_y = (j[1] + hex.position[1] + 100)
-                    hex_points_board.append((points_x, points_y))
-
+                    points_x = (j[0] + hex.x)
+                    points_y = (j[1] + hex.y)
+                    hex_points_board[(points_x, points_y)] = []
+                    hex_points_board[(points_x, points_y)].append(hex)
         # Delete corner points duplicates
-        for corner_t in hex_points_board:
+        for corner_t in hex_points_board.keys():
             add = True
-            if (len(self.settlement_points) > 0):
-                for sett_t in self.settlement_points:
-
-                    if abs(sett_t[0] - corner_t[0]) < 2 and abs(sett_t[1] - corner_t[1]) < 2:
-                        add = False
+            for sett_t in self.settlement_points.keys():
+                if (abs(sett_t[0] - corner_t[0]) < 2) and (abs(sett_t[1] - corner_t[1]) < 2):
+                    self.settlement_points[sett_t].append(hex_points_board[corner_t])
+                    add = False
+                    break
             if (add):
-                self.settlement_points.append(corner_t)
+                self.settlement_points[corner_t] = []
+                self.settlement_points[corner_t].append(hex_points_board[corner_t])
 
-        # Add settlement buttons to board
-        for i in self.settlement_points:
-            new_sett_button = Button('', (0, 191, 255), (200, 250, 250), (i[0]), (i[1]))
-            self.settlement_buttons.append(new_sett_button)
-        print(len(self.settlement_points))
-        print(self.settlement_points)
-
-        # print(len(self.settlement_points))
     def draw_settlement_points(self):
-        for i in self.settlement_points:
-            pygame.draw.circle(self.surface, BLUE, i, 12)
+        if len(self.settlement_buttons) <= 0:
+            radius = 10
+            for i in self.settlement_points.keys():
+                new_sett_button = Settlement(self, radius, DARKSKYBLUE, LIGHTCYAN, i[0]-radius, i[1]-radius)
+                # new_sett_button = Settlement(self, radius, TRASPARENT, LIGHTCYAN, i[0]-radius, i[1]-radius)
+                self.settlement_buttons.append(new_sett_button)
+        else:
+            for settlement in self.settlement_buttons:
+                settlement.update_together()
+        self.update()
 
-        # print(len(self.settlement_points))
+    def check_hover(self, position):
+        x = position[0] - self.x
+        y = position[1] - self.y
+        is_hover = False
+        clicked_settlement = None
+        for settlement in self.settlement_buttons:
+            if settlement.check_hover((x,y))[0]:
+                is_hover = settlement.check_hover((x,y))[0]
+                clicked_settlement = settlement.check_hover((x,y))[1]
+                break
+        global cursor_state
+        if is_hover:
+            if pygame.mouse.get_pressed()[0]:
+                cursor_state = "clicked"
+                pygame.mouse.set_cursor(pygame.cursors.tri_left)
+                clicked_settlement.change_button_color(BLACK, WHITE)
+                clicked_settlement.display_settlement_button()
+            elif cursor_state != "hand":
+                cursor_state = "hand"
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+        else:
+            if cursor_state != "normal":
+                cursor_state = "normal"
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        self.update()
+        return is_hover
 
     # def hexes_shrink(self, hexes):
     #     asyncio.get_event_loop().run_until_complete(asyncio.wait([hex.shrink() for hex in hexes]))
@@ -127,5 +158,5 @@ class MainBoard:
     #     loop.run_until_complete(cors)
 
     def update(self):
-        rect = self.super_surface.blit(self.surface, blit_position_transfer(self.super_surface, self.surface))
+        rect = self.super_surface.blit(self.surface, (self.x, self.y))
         pygame.display.update(rect)

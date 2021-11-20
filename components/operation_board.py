@@ -28,11 +28,11 @@ class OperationBoard:
             if self.button != None:
                 self.button.remove()
             self.type = "Roll"
-            self.button = Button(self, 'Roll Dice', BLACK, 1/2, 3/4)
+            self.button = Button(self, 'Roll Dice', BLACK, x = 1/2, y = 3/4)
         elif (type == "Trade"):
             if self.button != None:
                 self.button.remove()
-            self.button = Button(self, 'Exchange', BLACK, 1/2, 3/4)
+            self.button = Button(self, 'Exchange', BLACK, x = 1/2, y = 3/4)
             self.type = "Trade"
         elif (type == "Rob"):
             if self.button != None:

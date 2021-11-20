@@ -38,23 +38,21 @@ class Hexagon:
         self.type = type
         self.settlements = []
         self.num = num
-        self.position = position
         self.font = pygame.font.SysFont('Arial', 25)
         self.image = pygame.image.load(self.Image[type]).convert_alpha()
         self.draw_regular_polygon(self.Color[type])
-        self.surface.set_colorkey((0, 0, 0))
+        self.surface.set_colorkey(TRASPARENT)
         self.display()
 
+    def get_corner(self):
         # Settlement points
         n, r = 6, self.hex_side
         x, y = self.surface.get_width() / 2, self.surface.get_height() / 2
-        self.corner_points = [
+        corner_points = [
             (x + (r + 7) * sin(2 * pi * i / n), y + (r + 7) * cos(2 * pi * i / n))
             for i in range(n)
         ]
-
-    def get_corner(self):
-        return self.corner_points
+        return corner_points
 
     def draw_regular_polygon(self, color, text_color = WHITE):
         n, r = 6, self.hex_side
@@ -71,7 +69,7 @@ class Hexagon:
         pygame.draw.circle(self.circle_surface, text_color, (self.circle_radius/2 , self.circle_radius/2), 15)
         num_text = self.font.render(str(self.num), True, (6, 6, 6))
         self.circle_surface.blit(num_text, blit_position_transfer(self.circle_surface, num_text))
-        self.circle_surface.set_colorkey((0, 0, 0))
+        self.circle_surface.set_colorkey(TRASPARENT)
         self.surface.blit(self.circle_surface, blit_position_transfer(self.surface, self.circle_surface, x=1/2, y=4/5))
 
         self.image = pygame.transform.scale(self.image, (self.hex_side, self.hex_side))

@@ -1,14 +1,12 @@
 import pygame
 from main_board import MainBoard
+from operation_board import OperationBoard
 from random import *
 from player import Player
 from robber import Robber
-from button import *
-from dice import *
 from city import *
 from color import *
-from settlement import Settlement
-from operation_board import OperationBoard
+
 
 
 
@@ -24,14 +22,14 @@ class Window:
         main_board = MainBoard(screen)
         hexes = main_board.hexes_infos()
 
-        test_player = Player([], [], BLUE)
-        test_city = City(test_player, screen, (10, 10))
+        # test_player = Player([], [], BLUE)
+        # test_city = City(test_player, screen, (10, 10))
 
         operation_board = OperationBoard(screen)
         operation_board.change_board_type("Roll")
         # operation_board.change_board_type("Trade")
 
-        robber = Robber(screen, (640, 400))
+        # robber = Robber(screen, (640, 400))
 
         # User input for player color, settlement locations
         my_player = Player([], [], BLUE)
@@ -48,23 +46,10 @@ class Window:
         newcolor = BLACK
         pygame.display.flip()
 
-        board_sett_buttons = board.get_sett_buttons()
-        for i in range(len(board_sett_buttons)):
-            settle = Settlement(screen, board_sett_buttons[i].get_pos())
-            for j in range(len(hexes)):
-                distance = math.sqrt((settle.get_position()[0] - hexes[j].position[0])**2 +
-                                      (settle.get_position()[1] - hexes[j].position[1])**2)
-
-                if distance < 230:
-                    hexes[j].settlements.append(settle)
-                    print(str(hexes[j].position[0]) + ", " + str(hexes[j].position[1]))
-                    print(settle.get_position())
-                    print("\n")
-        pygame.display.flip()
         while True:
             clock.tick(20)
 
-            test_city.draw_city()
+            # test_city.draw_city()
             if (operation_board is not None):
                 if operation_board.type == "Init":
                     operation_board.remove()
@@ -77,20 +62,10 @@ class Window:
                             newcolor = BLACK
                         if operation_board.button.color != newcolor:
                             operation_board.change_button_color(newcolor)
-            # Settlement button operations. Checks for cursor hover and clicks and changes color
-            for butts in board_sett_buttons:
-                hover = False
-                buttx = butts.get_pos()[0]
-                butty = butts.get_pos()[1]
-                if (buttx - 7 <= pygame.mouse.get_pos()[0] <= buttx + 7) and (
-                        butty - 7 <= pygame.mouse.get_pos()[1] <= butty + 7):
-                    if pygame.mouse.get_pressed()[0]:
-                        butts.change_button_color(BLACK, WHITE)
-                        for tile in hexes:
-                            print("We did it 1")
 
-                    hover = True
-                butts.display_settlement_button(screen, hover)
+            # Settlement button operations. Checks for cursor hover and clicks and changes color
+            main_board.check_hover(pygame.mouse.get_pos())
+
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -102,12 +77,15 @@ class Window:
                         exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     # for test, should be delete after finishing UI part:
-                    xMouse = event.pos[0]
-                    yMouse = event.pos[1]
+                    # xMouse = event.pos[0]
+                    # yMouse = event.pos[1]
+                    xMouse = event.pos[0] - main_board.x
+                    yMouse = event.pos[1] - main_board.y
                     # print(xMouse, yMouse)
                     # for test, the above codes should be delete after finishing UI part:
 
                     if pygame.mouse.get_pressed()[0]:
+
                         if(operation_board is not None):
 
                             if (operation_board.type == "Roll"):
