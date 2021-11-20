@@ -11,8 +11,6 @@ class Settlement:
         self.hover_color = hover_color
         self.hover_status = False
 
-        self.clicked = BLACK
-
         self.side = radius*2
         self.surface = pygame.Surface((self.side, self.side))
 
