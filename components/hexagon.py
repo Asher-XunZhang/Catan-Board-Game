@@ -37,6 +37,7 @@ class Hexagon:
         self.id = id
         self.type = type
         self.settlements = []
+        self.players = []
         self.num = num
         self.font = pygame.font.SysFont('Arial', 25)
         self.image = pygame.image.load(self.Image[type]).convert_alpha()
@@ -79,12 +80,12 @@ class Hexagon:
     async def shrink(self):
         clock = pygame.time.Clock()
         current_time = pygame.time.get_ticks()
-        duration = 600
+        duration = 1500
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_WAIT)
         while pygame.time.get_ticks() < current_time + duration:
             clock.tick(20)
             self.shrink_color()
-            await asyncio.sleep(0.001)
+            await asyncio.sleep(0.1)
         self.change_num_color(WHITE)
 
     def shrink_color(self):
@@ -92,6 +93,7 @@ class Hexagon:
             self.text_color = RED
             self.change_num_color(RED)
         else:
+            self.text_color = WHITE
             self.change_num_color(WHITE)
         self.update()
 
@@ -107,3 +109,13 @@ class Hexagon:
 
     def update(self):
         self.display()
+
+    def add_player(self, player):
+        if player not in self.players:
+            self.players.append(player)
+
+    def update_player_resources(self):
+        for player in self.players:
+            player.add_single_resources(self.type)
+
+

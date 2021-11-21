@@ -125,10 +125,14 @@ class MainBoard:
         y = position[1] - self.y
         is_hover = False
         clicked_settlement = None
-        for settlement in self.settlement_buttons:
-            if settlement.check_hover((x,y))[0]:
-                is_hover = settlement.check_hover((x,y))[0]
-                clicked_settlement = settlement.check_hover((x,y))[1]
+        async def check_settlement_hover():
+            tasks = [settlement.check_hover((x, y)) for settlement in self.settlement_buttons]
+            return await asyncio.gather(*tasks)
+        results = asyncio.run(check_settlement_hover())
+        for result in results:
+            is_hover = is_hover | result[0]
+            if result[0]:
+                clicked_settlement = result[1]
                 break
         global cursor_state
         if is_hover:
@@ -148,11 +152,12 @@ class MainBoard:
         self.update()
         return is_hover
 
-    # def hexes_shrink(self, hexes):
-    #     asyncio.get_event_loop().run_until_complete(asyncio.wait([hex.shrink() for hex in hexes]))
-    #     loop = asyncio.get_event_loop()
-    #     cors = asyncio.wait(tasks)
-    #     loop.run_until_complete(cors)
+    def hexes_shrink(self, hexes):
+        async def shrink_hexes():
+            tasks = [hex.shrink() for hex in hexes]
+            await asyncio.gather(*tasks)
+        asyncio.run(shrink_hexes())
+
 
     def update(self):
         rect = self.super_surface.blit(self.surface, (self.x, self.y))

@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from color import *
 from calculation import *
 
@@ -38,15 +39,18 @@ class Settlement:
     def update_together(self):
         self.super_surface.blit(self.surface, (self.x, self.y))
 
-    def check_hover(self, position):
+    async def check_hover(self, position):
         x_match = position[0] > self.x - self.side and position[0] < self.x + self.side
         y_match = position[1] > self.y - self.side and position[1] < self.y + self.side
         if x_match and y_match:
-            self.hover_status = True
+            if self.hover_status != True:
+                self.hover_status = True
             settlement_object = self
         else:
-            self.hover_status = False
+            if self.hover_status != False:
+                self.hover_status = False
             settlement_object = None
+        await asyncio.sleep(0.001)
         self.display_settlement_button()
         return (self.hover_status, settlement_object)
 
