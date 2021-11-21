@@ -1,9 +1,13 @@
 # stores colors for the game
+TRASPARENT = (0, 0, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+CRIMSON = (220,20,60)
 GREEN = (0, 255, 0)
+FORESTGREEN = (34,139,34)
 YELLOW = (255, 255, 0)
 DARKSKYBLUE = (0, 191, 255)
+LIGHTCYAN = (200, 250, 250)
 LIGHTBLUE = (135,206,250)
 WHITE = (255, 255, 255)
 BLACK = (1, 1, 1)

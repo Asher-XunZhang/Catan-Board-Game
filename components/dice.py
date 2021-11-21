@@ -24,6 +24,7 @@ class Dice:
         self.dice = pygame.image.load("../resources/img/dice/dice_action_0.png")
         self.diceRect = self.dice.get_rect()
         self.surface = pygame.Surface((self.diceRect.width, self.diceRect.height))
+        self.surface.set_colorkey(TRASPARENT)
 
         position = blit_position_transfer(self.super_surface, self.surface, x, y)
         self.x = position[0]
@@ -42,15 +43,19 @@ class Dice:
         self.super_surface.blit(self.surface, (self.x, self.y))
         self.super_surface_object.update()
 
+    def remove(self):
+        self.surface.fill(LIGHTBLUE)
+        self.update()
+
     async def roll(self, value):
         clock = pygame.time.Clock()
         current_time = pygame.time.get_ticks()
-        duration = 600
+        duration = 1000
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_WAIT)
         while pygame.time.get_ticks() < current_time + duration:
             clock.tick(20)
             self.move()
             await asyncio.sleep(0.001)
-            pygame.display.update()
         self.stop(value)
 
     def move(self):
@@ -67,3 +72,4 @@ class Dice:
         self.surface.fill(LIGHTBLUE)
         self.surface.blit(self.diceStopImg[self.StopStatus], self.diceRect)
         self.update()
+
