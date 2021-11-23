@@ -21,7 +21,7 @@ class OperationBoard:
         self.x = self.super_surface.get_width() - self.width - 30
         self.y = self.super_surface.get_height() - self.height - 30
         self.button = None
-        self.resources = ["pasture", "forest", "field", "hill", "mountain"]
+        self.resources = ["lumber", "brick", "wool", "grain", "ore"]
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill(LIGHTBLUE)
 
@@ -40,6 +40,7 @@ class OperationBoard:
             if self.button != None:
                 self.button.remove()
             self.trade_list = {}
+            self.infos = {}
             self.add_trade_ui()
             self.button = Button(self, 'Exchange', BLACK, x = 1/2, y = (segment_num-1)/segment_num, front_size = 24)
         elif (type == "Rob"):
@@ -58,6 +59,7 @@ class OperationBoard:
             self.type = "Init"
             if self.button != None:
                 self.button.remove()
+        print(self.__dict__.keys())
         self.update()
 
     def draw_board(self):
@@ -119,6 +121,11 @@ class OperationBoard:
                         self.change_board_type("Trade")
                     elif self.type == "Trade":
                         asyncio.run(wait())
+                        old_stats = self.super_surface_object.status_board.resources
+                        for resource in self.resources:
+                            self.super_surface_object.status_board.change_info(resource,
+                                                                               old_stats[resource] + self.infos[resource])
+                        self.remove_trade_ui()
                         self.change_board_type("Rob")
                     elif self.type == "Rob":
                         asyncio.run(wait())
@@ -204,12 +211,13 @@ class OperationBoard:
                         break
                 if is_trade_button_hover:
                     break
-            infos = {}
+            self.infos = {}
             for resource in self.resources:
-                infos[resource] = int(self.trade_list[resource]["label"].text)
-                is_update_trade_info = is_update_trade_info | (self.trade_list[resource]["label"].text != "0")
-            if is_update_trade_info:
-                pass #TODO: update the player's infomation by using super_interface_object.current_player
+                self.infos[resource] = int(self.trade_list[resource]["label"].text)
+            #     is_update_trade_info = is_update_trade_info | (self.trade_list[resource]["label"].text != "0")
+            # if is_update_trade_info:
+            #     pass
+                 #TODO: update the player's infomation by using super_interface_object.current_player
                 # print(infos)
         return is_trade_button_hover
 
@@ -260,7 +268,14 @@ class OperationBoard:
             self.trade_list[self.resources[i]]["label"] = label
 
     def remove_trade_ui(self):
-        pass # TODO: remove trade ui method
+        for resource in self.trade_list:
+            self.trade_list[resource]["buttons"]["plus"].remove()
+            self.trade_list[resource]["buttons"]["minus"].remove()
+            self.trade_list[resource]["label"].remove()
+        del self.trade_list
+        del self.infos
+        self.surface.fill(LIGHTBLUE)
+        self.update()
 
 
 

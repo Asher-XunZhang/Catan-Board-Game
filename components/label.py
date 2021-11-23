@@ -41,7 +41,8 @@ class Label:
             self.color = color
         if text:
             self.text = text
+        self.remove()
         self.surface = self.font.render(self.text, True, self.color)
         self.width = self.surface.get_width()
         self.height = self.surface.get_height()
-        self.display()
+        self.update()

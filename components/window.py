@@ -6,7 +6,7 @@ from player import Player
 from robber import Robber
 from city import *
 from color import *
-
+from status_board import StatusBoard
 
 
 
@@ -31,7 +31,7 @@ class Window:
         self.operation_board.change_board_type("Roll")
         # operation_board.change_board_type("Trade")
 
-
+        self.status_board = StatusBoard(self)
         # robber = Robber(screen, (640, 400))
 
         # User input for player color, settlement locations

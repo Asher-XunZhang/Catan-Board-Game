@@ -7,9 +7,11 @@ from calculation import *
 
 class MainBoard:
     def __init__(self, surface):
-        side = min(surface.get_width(), surface.get_height())*3/4
+        self.side = min(surface.get_width(), surface.get_height())*3/4
+        self.height = self.side
+        self.width = self.side
         self.super_surface = surface
-        self.surface = pygame.Surface((side, side))
+        self.surface = pygame.Surface((self.side, self.side))
         position = blit_position_transfer(self.super_surface, self.surface)
         self.x = position[0]
         self.y = position[1]
