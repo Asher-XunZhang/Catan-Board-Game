@@ -3,8 +3,9 @@ from color import *
 from calculation import *
 
 class ImgButton:
-    def __init__(self, super_surface_object, imgResource, size, x, y, porpotion = True):
+    def __init__(self, super_surface_object, imgResource, size, x, y, proportion = True):
         self.size = size
+
         self.super_surface = super_surface_object.surface
         self.super_surface_object = super_surface_object
         self.color = BLACK
@@ -18,7 +19,7 @@ class ImgButton:
         self.height = self.surface.get_height()
         self.is_hover = False
 
-        if porpotion:
+        if proportion:
             position = blit_position_transfer(self.super_surface, self.surface, x, y)
         else:
             position = (x, y)

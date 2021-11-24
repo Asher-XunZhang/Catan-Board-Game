@@ -114,8 +114,8 @@ class MainBoard:
         if len(self.settlement_buttons) <= 0:
             radius = 10
             for i in self.settlement_points.keys():
-                new_sett_button = Settlement(self, radius, DARKSKYBLUE, LIGHTCYAN, i[0]-radius, i[1]-radius)
-                # new_sett_button = Settlement(self, radius, TRASPARENT, LIGHTCYAN, i[0]-radius, i[1]-radius)
+                # new_sett_button = Settlement(self, radius, DARKSKYBLUE, LIGHTCYAN, i[0]-radius, i[1]-radius)
+                new_sett_button = Settlement(self, radius, LIGHTBLUE, LIGHTCYAN, i[0]-radius, i[1]-radius)
                 self.settlement_buttons.append(new_sett_button)
         else:
             for settlement in self.settlement_buttons:
@@ -138,15 +138,18 @@ class MainBoard:
                 break
         global cursor_state
         if is_hover:
-            if pygame.mouse.get_pressed()[0]:
-                cursor_state = "clicked"
-                pygame.mouse.set_cursor(pygame.cursors.tri_left)
-                clicked_settlement.change_button_color(BLACK, WHITE)
-                clicked_settlement.display_settlement_button()
-                #TODO: add the player to the hex
-            elif cursor_state != "hand":
-                cursor_state = "hand"
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            if clicked_settlement.type != "city":
+                if pygame.mouse.get_pressed()[0]:
+                    for event in pygame.event.get():
+                        cursor_state = "clicked"
+                        pygame.mouse.set_cursor(pygame.cursors.tri_left)
+                        clicked_settlement.update_type()
+                        break
+                    # clicked_settlement.display_settlement_button()
+                    #TODO: add the player to the hex here
+                elif cursor_state != "hand":
+                    cursor_state = "hand"
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         else:
             if cursor_state != "normal":
                 cursor_state = "normal"

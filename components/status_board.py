@@ -55,7 +55,7 @@ class StatusBoard:
             img_surface.set_colorkey(TRASPARENT)
             self.resources_display[resource]["image"] = img_surface
             self.surface.blit(img_surface, blit_position_transfer(self.surface, img_surface, i/5 + 2/30, 1/2))
-            self.resources_display[resource]["value"] = Label(self, str(self.resources[resource]), GRAY, 16, i/5 + 9/60, 1/2)
+            self.resources_display[resource]["value"] = Label(self, str(self.resources[resource]), GRAY, 16, i/5 + 17/120, 1/2)
         self.update()
 
     def update(self):
@@ -82,6 +82,7 @@ class StatusBoard:
             label.remove()
             del label
             label = Label(self, str(value), color, 16, x, y, False)
-            self.resources_display[resource]["label"] = label
+            self.resources_display[resource]["value"] = label
+            # self.update()
 
 

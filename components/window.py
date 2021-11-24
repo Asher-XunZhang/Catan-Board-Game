@@ -9,7 +9,6 @@ from color import *
 from status_board import StatusBoard
 
 
-
 class Window:
     def __init__(self):
         pygame.init()
@@ -46,23 +45,23 @@ class Window:
         global cursor_state
         cursor_state = "normal"
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        is_hover = False
+        is_opbhover = False
+        is_mbhover = False
         pygame.display.flip()
-
         while True:
             clock.tick(20)
-
-            # test_city.draw_city()
             if (self.operation_board is not None):
                 if self.operation_board.type == "Init":
                     self.operation_board.remove()
-                    is_hover = False
+                    is_opbhover = False
                 else:
-                    is_hover = self.operation_board.check_hover(pygame.mouse.get_pos())
+                    if not is_mbhover:
+                        is_opbhover = self.operation_board.check_hover(pygame.mouse.get_pos())
 
             # Settlement button operations. Checks for cursor hover and clicks and changes color
-            if not is_hover:
-                self.main_board.check_hover(pygame.mouse.get_pos())
+            if not is_opbhover:
+                if self.operation_board.type == "Build":
+                    is_mbhover = self.main_board.check_hover(pygame.mouse.get_pos())
 
             pygame.display.update()
             for event in pygame.event.get():
