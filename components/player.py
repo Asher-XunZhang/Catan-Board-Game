@@ -9,18 +9,19 @@ class Player:
         self.color = color
         self.settlements = settlements
         self.roads = roads
-        self.bricks = 0
-        self.ore = 0
-        self.grain = 0
-        self.lumber = 0
-        self.wool = 0
+        self.resources = {
+            "bricks": 0,
+            "ore": 0,
+            "grain": 0,
+            "lumber": 0,
+            "wool": 0
+        }
         self.development_cards = []
         self.cities = []
         self.victory_points = 0
 
     def get_resource_cards(self):
-        return self.bricks, self.ore, self.grain, \
-               self.lumber, self.wool
+        return self.resources
 
     def get_victory_points(self):
         self.count_victory_points()

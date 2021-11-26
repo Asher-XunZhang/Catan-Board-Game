@@ -3,8 +3,6 @@ import asyncio
 from color import *
 from calculation import *
 
-# TODO: more functions
-
 class Settlement:
     def __init__(self, super_surface_object, radius, color, hover_color, x, y):
         self.type = "initial"

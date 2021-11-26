@@ -47,6 +47,7 @@ class Window:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         is_opbhover = False
         is_mbhover = False
+        self.current_player = my_player
         pygame.display.flip()
         while True:
             clock.tick(20)

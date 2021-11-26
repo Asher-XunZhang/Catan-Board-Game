@@ -38,7 +38,7 @@ class OperationBoard:
 
         self.draw_board()
 
-    def change_board_type(self, type):
+    def change_board_type(self, type, message = "Error"):
         resources_num = len(self.resources)
         segment_num = resources_num * 2
         if (type == "Roll"):
@@ -76,6 +76,13 @@ class OperationBoard:
             self.main_button["Back"] = ImgButton(self, self.ButtonImg["back"], 30, x=1 / 9,
                                                  y=(segment_num - 1) / segment_num)
 
+        elif (type == "Error"):
+            self.clean_main_button()
+            self.prev_type = self.type
+            self.type = "Error"
+            self.label = Label(self, message, RED, 20, 1/3, 1/2)
+            self.main_button["Back"] = ImgButton(self, self.ButtonImg["back"], 30, x=1 / 9,
+                                                 y=(segment_num - 1) / segment_num)
 
         else:
             self.type = "Init"
@@ -174,7 +181,7 @@ class OperationBoard:
                             asyncio.run(wait())
                             self.remove_build_type_ui()
                             if main_button == "Buy":
-                                self.change_board_type("Buy")
+                                self.change_board_type("Error", "Now this is for test!")  ##TODO: SHOULD CHANGE TO BUY
                             else:
                                 self.change_board_type("Operate")
                         elif self.type == "Buy":
@@ -185,6 +192,12 @@ class OperationBoard:
                             else:
                                 # self.get_new_development_card()                 #TODO: Add Buy UI get new development card function
                                 self.change_board_type("Operate")
+
+                        elif self.type == "Error":
+                            if main_button == "Back":
+                                prev_type = self.prev_type
+                                self.remove_error_ui()
+                                self.change_board_type(prev_type)
                     break
         return is_main_button_hover
 
@@ -216,6 +229,9 @@ class OperationBoard:
         asyncio.run(waiting_animation(1))
         focus_hexes = hexes[total]
         main_board.hexes_shrink(focus_hexes)
+        for hex in focus_hexes:
+            resource_type = Resource[hex.type]
+            self.super_surface_object.current_player.resources[resource_type] += 1
 
         old_resources = self.super_surface_object.status_board.resources
         for hex in focus_hexes:
@@ -376,6 +392,15 @@ class OperationBoard:
         pygame.draw.rect(self.surface, LIGHTBLUE, (0, 0, self.width, self.height), border_radius=30)
         self.update()
 
+    ######################################## "ERROR Type Methods" ############################################
+    def add_error_ui(self):
+        pass
+
+    def remove_error_ui(self):
+        del self.prev_type
+        del self.label
+        pygame.draw.rect(self.surface, LIGHTBLUE, (0, 0, self.width, self.height), border_radius=30)
+        self.update()
 
 
 
