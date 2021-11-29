@@ -230,8 +230,12 @@ class OperationBoard:
         focus_hexes = hexes[total]
         main_board.hexes_shrink(focus_hexes)
         for hex in focus_hexes:
-            resource_type = Resource[hex.type]
-            self.super_surface_object.current_player.resources[resource_type] += 1
+            if hex.type != 'desert':
+                resource_type = Resource[hex.type]
+                self.super_surface_object.current_player.resources[resource_type] += 1
+            else:
+                # add move robber
+                pass
 
         old_resources = self.super_surface_object.status_board.resources
         for hex in focus_hexes:
