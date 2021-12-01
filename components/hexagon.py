@@ -14,8 +14,8 @@ class Hexagon:
         self.surface = pygame.Surface((self.hex_side*2, self.hex_side*2))
         self.id = id
         self.type = type
-        self.settlements = []
-        self.players = []
+        self.settlements = {}
+        # self.players = []
         self.num = num
         self.font = pygame.font.SysFont('Arial', 25)
         self.image = pygame.image.load(ImageResource[type]).convert_alpha()

@@ -10,7 +10,7 @@ class Player:
         self.settlements = settlements
         self.roads = roads
         self.resources = {
-            "bricks": 0,
+            "brick": 0,
             "ore": 0,
             "grain": 0,
             "lumber": 0,
