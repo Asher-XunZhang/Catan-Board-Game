@@ -8,11 +8,12 @@ from calculation import *
 from road import *
 
 class MainBoard:
-    def __init__(self, surface):
-        self.side = min(surface.get_width(), surface.get_height()) * 3 / 4
+    def __init__(self, super_surface_object):
+        self.super_surface_object = super_surface_object
+        self.super_surface = super_surface_object.surface
+        self.side = min(self.super_surface.get_width(), self.super_surface.get_height()) * 3 / 4
         self.height = self.side
         self.width = self.side
-        self.super_surface = surface
         self.surface = pygame.Surface((self.side, self.side))
         position = blit_position_transfer(self.super_surface, self.surface)
         self.x = position[0]
@@ -23,7 +24,6 @@ class MainBoard:
         self.settlement_points = {}
         self.road_buttons = []
         self.road_points = {}
-        self.hexes = []
 
         self.draw_board()
         self.calc_settlement_points()
@@ -39,15 +39,15 @@ class MainBoard:
             for i in range(6)
         ])
         element = []
-        element += ["pasture"] * 4 + ["forest"] * 4 + ["field"] * 4 + ["hill"] * 3 + ["mountain"] * 3
+        element += ["pasture"] * 4 + ["forest"] * 4 + ["field"] * 4 + ["hill"] * 3 + ["mountain"] * 3 + ["desert"]
         random.shuffle(element)
         random.shuffle(element)
-        element.insert(9, "desert")
+        # element.insert(9, "desert") # if need te dersert always be the center hex, uncomment this line and delete ["desert"] in the third line of code above
 
-        num = [2] + [12] + [3, 4, 5, 6, 8, 9, 10, 11] * 2
+        num = [2] + [12] + [3, 4, 5, 6, 8, 9, 10, 11] * 2 + [7]
         random.shuffle(num)
         random.shuffle(num)
-        num.insert(9, 7)
+        # num.insert(9, 7) # if need te dersert always be the center hex, uncomment this line and delete [7] in the third line of code above
         self.hexes = {
             2: [],
             3: [],
@@ -122,8 +122,6 @@ class MainBoard:
                 self.settlement_points[corner_t] = []
                 self.settlement_points[corner_t].append(points_hex_board[corner_t])
                 hex_justify_points[points_hex_board[corner_t]].append(corner_t)
-        # print(self.settlement_points)
-        # print(hex_justify_points)
 
         for hex in list(hex_justify_points.keys()):
             corner_points = hex_justify_points[hex]
@@ -157,7 +155,8 @@ class MainBoard:
             for settlement in self.settlement_buttons:
                 settlement.update_together()
             for road in self.road_buttons:
-                road.update_together()
+                if road.type != "road":
+                    road.update_together()
         self.update()
 
     def check_hover(self, position, player=None):
@@ -181,9 +180,38 @@ class MainBoard:
                 if pygame.mouse.get_pressed()[0]:
                     for event in pygame.event.get():
                         cursor_state = "clicked"
+                        if (self.super_surface_object.round <= 1):
+                            if clicked_settlement.type == "settlement":
+                                self.super_surface_object.operation_board.remove_build_type_ui()
+                                self.super_surface_object.operation_board.change_board_type("Error",
+                                                                                            "Your resources are NOT enough!")
+                                return False
+                        if (self.super_surface_object.round > 1) | (self.super_surface_object.current_player.settlement > 1):
+                            if clicked_settlement.type == "initial":
+                                update_type = "settlement"
+                            elif clicked_settlement.type == "settlement":
+                                update_type = "city"
+                            cost_dict = self.super_surface_object.operation_board.cost_list[update_type]
+                            player_resources_copy = player.resources.copy()
+                            for resource in cost_dict:
+                                if player_resources_copy[resource] >= cost_dict[resource]:
+                                    player_resources_copy[resource] -= cost_dict[resource]
+                                else:
+                                    self.super_surface_object.operation_board.remove_build_type_ui()
+                                    self.super_surface_object.operation_board.change_board_type("Error", "Your resources are NOT enough!")
+                                    return False
+                            player.resources = player_resources_copy
+                            self.super_surface_object.status_board.update_info()
                         clicked_settlement.update_type()
-                        # TODO: add the player to the hex here and change the clicked_settlement.player to player and use the player's color
-                        ## self.settlement_points[(clicked_settlement.x, clicked_settlement.y)].append(player)
+                        if clicked_settlement.type == "settlement":
+                            player.settlement += 1
+                        elif clicked_settlement.type == "city":
+                            player.city += 1
+                        # add the player to the hex here and change the clicked_settlement.player to player and use the player's color
+                        for hex in self.settlement_points[(clicked_settlement.x + 10, clicked_settlement.y + 10)]: # 10 is the settlement_radius in the draw_settlement function
+                            if not (player in hex.settlements):
+                                hex.settlements[player] = []
+                            hex.settlements[player].append(clicked_settlement)
                         break
                 elif cursor_state != "hand":
                     cursor_state = "hand"
@@ -207,7 +235,28 @@ class MainBoard:
                     if pygame.mouse.get_pressed()[0]:
                         for event in pygame.event.get():
                             cursor_state = "clicked"
+                            if self.super_surface_object.round == 1:
+                                self.super_surface_object.operation_board.remove_build_type_ui()
+                                self.super_surface_object.operation_board.change_board_type("Error",
+                                                                                            "Build two settlements firstly!")
+                                return False
+                            if clicked_road.type == "initial":
+                                update_type = "road"
+                            cost_dict = self.super_surface_object.operation_board.cost_list[update_type]
+                            player_resources_copy = player.resources.copy()
+                            for resource in cost_dict:
+                                if player_resources_copy[resource] >= cost_dict[resource]:
+                                    player_resources_copy[resource] -= cost_dict[resource]
+                                else:
+                                    self.super_surface_object.operation_board.remove_build_type_ui()
+                                    self.super_surface_object.operation_board.change_board_type("Error",
+                                        "Your resources are NOT enough!")
+                                    return False
+                            player.resources = player_resources_copy
+                            self.super_surface_object.status_board.update_info()
                             clicked_road.update_type()
+                            if clicked_road.type == "road":
+                                player.road += 1
                             clicked_road.display_settlement_button()
                             info = self.road_points[(clicked_road.x + clicked_road.radius, clicked_road.y + clicked_road.radius)]
                             pygame.draw.line(self.surface, BLACK, info[0], info[1], 5) ## TODO: change the color to the player's color
@@ -235,7 +284,6 @@ class MainBoard:
         async def shrink_hexes():
             tasks = [hex.shrink() for hex in hexes]
             await asyncio.gather(*tasks)
-
         asyncio.run(shrink_hexes())
 
     def update(self):

@@ -15,7 +15,6 @@ class Hexagon:
         self.id = id
         self.type = type
         self.settlements = {}
-        # self.players = []
         self.num = num
         self.font = pygame.font.SysFont('Arial', 25)
         self.image = pygame.image.load(ImageResource[type]).convert_alpha()
@@ -87,13 +86,5 @@ class Hexagon:
 
     def update(self):
         self.display()
-
-    def add_player(self, player):
-        if player not in self.players:
-            self.players.append(player)
-
-    def update_player_resources(self):
-        for player in self.players:
-            player.add_single_resources(self.type)
 
 

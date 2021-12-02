@@ -70,19 +70,20 @@ class StatusBoard:
         self.hide()
         # del self
 
-    def change_info(self, resource, value):
-        if self.resources[resource] != value:
-            self.resources[resource] = value
-            if value > 0:
-                color = BLACK
-            else:
-                color = GRAY
-            label = self.resources_display[resource]["value"]
-            x, y = label.x, label.y
-            label.remove()
-            del label
-            label = Label(self, str(value), color, 16, x, y, False)
-            self.resources_display[resource]["value"] = label
-            # self.update()
+    def update_info(self):
+        new_resources = self.super_surface_object.real_player.resources
+        for resource in new_resources:
+            if self.resources[resource] != new_resources[resource]:
+                self.resources[resource] = new_resources[resource]
+                if new_resources[resource] > 0:
+                    color = BLACK
+                else:
+                    color = GRAY
+                label = self.resources_display[resource]["value"]
+                x, y = label.x, label.y
+                label.remove()
+                del label
+                label = Label(self, str(new_resources[resource]), color, 16, x, y, False)
+                self.resources_display[resource]["value"] = label
 
 

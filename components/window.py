@@ -20,22 +20,22 @@ class Window:
         self.surface = screen
         self.current_player = None
         pygame.display.set_caption("Catan")
-        self.main_board = MainBoard(screen)
+        self.main_board = MainBoard(self)
         self.hexes = self.main_board.hexes_infos()
 
         # test_player = Player([], [], BLUE)
         # test_city = City(test_player, screen, (10, 10))
 
         self.operation_board = OperationBoard(self)
-        self.operation_board.change_board_type("Roll")
+        self.operation_board.change_board_type("Build")
         # operation_board.change_board_type("Trade")
 
         self.status_board = StatusBoard(self)
         # robber = Robber(screen, (640, 400))
 
         # User input for player color, settlement locations
-        my_player = Player([], [], BLUE)
-        computer = Player([], [], RED)
+        my_player = Player(BLUE)
+        computer = Player(RED)
         # settlement1 = Settler(my_player, Board, (0, 0))
         # my_player.settlements.append(settlement1)
         # Hardcode adding settlement to tile for test purposes
@@ -47,6 +47,8 @@ class Window:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         is_opbhover = False
         is_mbhover = False
+        self.round = 1
+        self.real_player = my_player
         self.current_player = my_player
         pygame.display.flip()
         while True:
@@ -62,7 +64,7 @@ class Window:
             # Settlement button operations. Checks for cursor hover and clicks and changes color
             if not is_opbhover:
                 if self.operation_board.type == "Build":
-                    is_mbhover = self.main_board.check_hover(pygame.mouse.get_pos())
+                    is_mbhover = self.main_board.check_hover(pygame.mouse.get_pos(), self.current_player)
 
             pygame.display.update()
             for event in pygame.event.get():

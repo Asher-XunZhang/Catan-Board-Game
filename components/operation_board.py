@@ -49,9 +49,10 @@ class OperationBoard:
         elif (type == "Operate"):
             self.type = "Operate"
             self.clean_main_button()
-            self.main_button["Trade"] = ImgButton(self, self.ButtonImg["trade"], 50, x = 1/4, y = 1/3)
-            self.main_button["Build"] = ImgButton(self, self.ButtonImg["build"], 50, x = 2/4, y = 1/3)
-            self.main_button["Buy"] = ImgButton(self, self.ButtonImg["buy"], 50, x = 3/4, y = 1/3)
+            if self.super_surface_object.round > 1:
+                self.main_button["Trade"] = ImgButton(self, self.ButtonImg["trade"], 50, x = 1/4, y = 1/3)
+                self.main_button["Buy"] = ImgButton(self, self.ButtonImg["buy"], 50, x = 3/4, y = 1/3)
+            self.main_button["Build"] = ImgButton(self, self.ButtonImg["build"], 50, x=2 / 4, y=1 / 3)
             self.main_button["Finish"] = ImgButton(self, self.ButtonImg["finish"], 50, x = 3/4, y = 3/4)
 
         elif (type == "Trade"):
@@ -80,7 +81,7 @@ class OperationBoard:
             self.clean_main_button()
             self.prev_type = self.type
             self.type = "Error"
-            self.label = Label(self, message, RED, 20, 1/3, 1/2)
+            self.label = Label(self, message, RED, 20, 1/2, 1/2)
             self.main_button["Back"] = ImgButton(self, self.ButtonImg["back"], 30, x=1 / 9,
                                                  y=(segment_num - 1) / segment_num)
 
@@ -166,32 +167,55 @@ class OperationBoard:
                             elif main_button == "Buy":
                                 self.change_board_type("Buy")
                             elif main_button == "Finish":
-                                self.change_board_type("Init")
+                                if self.super_surface_object.round <= 1:
+                                    count_settlement = 0
+                                    for settlement in self.super_surface_object.main_board.settlement_buttons:
+                                        if settlement.type == "settlement":
+                                            count_settlement += 1
+                                    if count_settlement != 2:
+                                        self.change_board_type("Error","Build two settlements firstly!")
+                                        return is_main_button_hover
+                                self.super_surface_object.round += 1
+                                self.change_board_type("Roll") #TODO: Should change to Init
 
                         elif self.type == "Trade":
                             asyncio.run(wait())
                             if main_button == "Trade":
-                                old_stats = self.super_surface_object.status_board.resources
+                                positive_num = 0
+                                negative_num = 0
+                                for values in self.infos.values():
+                                    if values > 0:
+                                        positive_num += 1
+                                    elif values < 0:
+                                        negative_num += 1
+                                if (positive_num == 0) & (negative_num > 0):
+                                    self.remove_trade_ui()
+                                    self.change_board_type("Error", "Must have income!")
+                                    return is_main_button_hover
+                                elif (negative_num == 0) & (positive_num > 0):
+                                    self.remove_trade_ui()
+                                    self.change_board_type("Error", "Must have expenses!")
+                                    return is_main_button_hover
                                 for resource in self.resources:
-                                    self.super_surface_object.status_board.change_info(resource,
-                                                                                       old_stats[resource] + self.infos[resource])
+                                    self.super_surface_object.current_player.resources[resource] += self.infos[resource]
+                                self.super_surface_object.status_board.update_info()
                             self.remove_trade_ui()
                             self.change_board_type("Operate")
                         elif self.type == "Build":
                             asyncio.run(wait())
                             self.remove_build_type_ui()
                             if main_button == "Buy":
-                                self.change_board_type("Error", "Now this is for test!")  ##TODO: SHOULD CHANGE TO BUY
+                                self.change_board_type("Buy")  ##TODO: SHOULD CHANGE TO BUY
                             else:
                                 self.change_board_type("Operate")
                         elif self.type == "Buy":
                             asyncio.run(wait())
                             if main_button == "Back":
                                 # self.remove_buy_ui()                             #TODO: Add Buy UI remove function
-                                self.change_board_type("Build")
+                                self.change_board_type("Operate")
                             else:
                                 # self.get_new_development_card()                 #TODO: Add Buy UI get new development card function
-                                self.change_board_type("Operate")
+                                self.change_board_type("Error", "This feature is pending development!")
 
                         elif self.type == "Error":
                             if main_button == "Back":
@@ -232,17 +256,23 @@ class OperationBoard:
         for hex in focus_hexes:
             if hex.type != "desert":
                 resource_type = Resource[hex.type]
-                self.super_surface_object.current_player.resources[resource_type] += 1 #TODO: should change to the hex's player
-
-        old_resources = self.super_surface_object.status_board.resources
-        for hex in focus_hexes:
-            if hex.type != "desert":
-                self.super_surface_object.status_board.change_info(Resource[hex.type], old_resources[Resource[hex.type]] + 1)
+                for player in hex.settlements.keys():
+                    for settlement in hex.settlements[player]:
+                        if settlement.type == "settlement":
+                            add_value = 1
+                            player.resources[resource_type] += 1
+                        elif settlement.type == "city":
+                            player.resources[resource_type] += 1 # TODO: IDK WHY the add_value here would added the resource in double,
+                                                                        # TODO: it should be 2 but I have to put 1 here.
+                        # else:
+                        #     add_value = 0
+                        # player.resources[resource_type] += add_value
+                self.super_surface_object.status_board.update_info()
         self.main_button_check_hover(pygame.mouse.get_pos())
         dice1.remove()
         dice2.remove()
         self.update()
-        return total
+        # return total
 
     ######################################## "Trade Type Methods" ############################################
 
@@ -267,6 +297,7 @@ class OperationBoard:
                         if pygame.mouse.get_pressed()[0]:
                             label = self.trade_list[resource]["label"]
                             x, y = label.x, label.y
+                            old_value = int(label.text)
                             new_value = int(label.text)
                             label.remove()
                             del label
@@ -274,6 +305,10 @@ class OperationBoard:
                                 new_value += 1
                             elif img_button_type == "minus":
                                 new_value -= 1
+                                if (self.super_surface_object.current_player.resources[resource] < abs(new_value)) & (old_value <= 0):
+                                    self.remove_trade_ui()
+                                    self.change_board_type("Error", "Exceed the " + resource + " you own")
+                                    return is_trade_button_hover
                             if new_value > 0:
                                 new_color = FORESTGREEN
                             elif new_value < 0:
