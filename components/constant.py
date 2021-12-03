@@ -36,3 +36,10 @@ Terrain = {
         "grain" : "field"
 }
 cursor_state = "normal"
+
+CostList = {
+    "settlement": {"lumber": 1, "brick": 1, "wool": 1, "grain": 1},
+    "city"      : {"grain": 2, "ore": 3},
+    "road"      : {"lumber":1, "brick":1},
+    "devCard"   : {"wool":1, "grain":1, "ore":1}
+}

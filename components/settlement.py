@@ -8,6 +8,9 @@ class Settlement:
         self.type = "initial"
         self.image = None
         self.image_color = None
+        self.image_current_color = None
+        self.image_color_hover = RED
+        self.image_type = None
         self.player = None
 
         self.color = color
@@ -63,27 +66,33 @@ class Settlement:
             if self.type == "initial":
                 pygame.draw.circle(self.surface, self.hover_color, (self.side/2, self.side/2), self.radius, 2)
             else:
-                if self.image:
-                    pygame.pixelarray.PixelArray(self.image).replace(self.image_color, self.color)
+                if (self.image!=None) & (self.image_type == self.type) & (self.image_current_color != self.image_color_hover):
+                    pygame.pixelarray.PixelArray(self.image).replace(self.image_current_color, self.image_color_hover)
                     self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
-                self.image = pygame.image.load(ImageResource[self.type]).convert_alpha()
-                self.image= pygame.transform.scale(self.image, (self.side, self.side))
-                pygame.pixelarray.PixelArray(self.image).replace(BLACK, RED)
-                self.image_color = RED
-                self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
+                else:
+                    self.image = pygame.image.load(ImageResource[self.type]).convert_alpha()
+                    self.image= pygame.transform.scale(self.image, (self.side, self.side))
+                    self.image_type = self.type
+                    pygame.pixelarray.PixelArray(self.image).replace(BLACK, self.image_color_hover)
+                    self.image_current_color = self.image_color_hover
+                    self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
 
         else:
             if self.type == "initial":
                 pygame.draw.circle(self.surface, self.color, (self.side/2, self.side/2), self.radius)
             else:
-                if self.image:
-                    pygame.pixelarray.PixelArray(self.image).replace(self.image_color, self.color)
+                if (self.image != None) & (self.image_type == self.type) & (self.image_current_color != self.image_color):
+                    pygame.pixelarray.PixelArray(self.image).replace(self.image_current_color, self.image_color)
                     self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
-                self.image = pygame.image.load(ImageResource[self.type]).convert_alpha()
-                self.image = pygame.transform.scale(self.image, (self.side, self.side))
-                # pygame.pixelarray.PixelArray(self.image).replace(BLACK, YELLOW)   ## TODO: CHANGE THE COLOR TO PLAYER'S COLOR
-                self.image_color = BLACK
-                self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
+                else:
+                    self.image = pygame.image.load(ImageResource[self.type]).convert_alpha()
+                    self.image = pygame.transform.scale(self.image, (self.side, self.side))
+                    self.image_type = self.type
+                    if(self.image_current_color == None):
+                        self.image_current_color = BLACK
+                    pygame.pixelarray.PixelArray(self.image).replace(self.image_current_color, self.image_color)
+                    self.image_current_color = self.image_color
+                    self.surface.blit(self.image, blit_position_transfer(self.surface, self.image))
         self.update_together()
 
 
@@ -93,8 +102,9 @@ class Settlement:
     def update_type(self, player = None):
         if self.type != "city":
             if self.type == "initial":
-                if player == None:
+                if player != None:
                     self.player = player
+                    self.image_color = self.player.color
                 self.type = "settlement"
             elif self.type == "settlement":
                 self.type = "city"

@@ -81,7 +81,7 @@ class Hexagon:
     def display(self):
         self.super_surface.blit(self.surface, (self.x, self.y))
         if len(self.super_surface_object.settlement_points) > 0:
-            self.super_surface_object.draw_settlement_points()
+            self.super_surface_object.draw_points()
         self.super_surface_object.update()
 
     def update(self):

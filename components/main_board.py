@@ -24,10 +24,15 @@ class MainBoard:
         self.settlement_points = {}
         self.road_buttons = []
         self.road_points = {}
+        self.settlement_road_position = {} # store the road position that the settlement position is connected to -> settlement_position : [road_position]
+        self.settlement_road_button = {} # store the road button that the settlement button is connected to
+        self.road_settlement_button = {} # store the settlement button that the road button is connected to
+        self.road_road_button = {} # store the road button that the road button is connected to
+        self.settlement_settlement_button = {} # store the settlement button that the settlement button is connected to
 
         self.draw_board()
         self.calc_settlement_points()
-        self.draw_settlement_points()
+        self.draw_points()
 
         self.update()
 
@@ -136,21 +141,51 @@ class MainBoard:
                     point_2 = corner_points[i + 1]
                     x = (point_1[0] + point_2[0]) / 2
                     y = (point_1[1] + point_2[1]) / 2
+                if point_1 not in self.settlement_road_position:
+                    self.settlement_road_position[point_1] = []
+                if point_2 not in self.settlement_road_position:
+                    self.settlement_road_position[point_2] = []
+                self.settlement_road_position[point_1].append((x, y))
+                self.settlement_road_position[point_2].append((x, y))
                 self.road_points[(x, y)] = (point_1, point_2, hex)
 
-    def draw_settlement_points(self):
+    def draw_points(self):
         if len(self.settlement_buttons) <= 0:
             settlement_radius = 10
             for i in self.settlement_points.keys():
-                # new_sett_button = Settlement(self, radius, DARKSKYBLUE, LIGHTCYAN, i[0]-radius, i[1]-radius)
                 new_sett_button = Settlement(self, settlement_radius, LIGHTBLUE, LIGHTCYAN, i[0] - settlement_radius, i[1] - settlement_radius)
                 self.settlement_buttons.append(new_sett_button)
             road_radius = 6
             for i in self.road_points.keys():
-                # new_road_button = Road(self, road_radius, LIGHTBLUE, LIGHTCYAN, i[0] - road_radius, i[1] - road_radius)
                 new_road_button = Road(self, road_radius, LIGHTBLUE, BLACK, i[0] - road_radius, i[1] - road_radius)
                 self.road_buttons.append(new_road_button)
 
+            for settlement_button in self.settlement_buttons:
+                road_list = self.settlement_road_position[(settlement_button.x+settlement_radius, settlement_button.y+settlement_radius)]
+                self.settlement_road_button[settlement_button] = []
+                for road_button in self.road_buttons:
+                    if (road_button.x + road_radius, road_button.y + road_radius) in road_list:
+                        self.settlement_road_button[settlement_button].append(road_button)
+                        if road_button not in self.road_settlement_button:
+                            self.road_settlement_button[road_button] = []
+                        if settlement_button not in self.road_settlement_button[road_button]:
+                            self.road_settlement_button[road_button].append(settlement_button)
+            for settlement_button in self.settlement_buttons:
+                for road_button in self.settlement_road_button[settlement_button]:
+                    if road_button not in self.road_road_button:
+                        self.road_road_button[road_button] = []
+                    the_other_connected_roads = self.settlement_road_button[settlement_button].copy()
+                    the_other_connected_roads.remove(road_button)
+                    for other_road in the_other_connected_roads:
+                        if other_road not in self.road_road_button[road_button]:
+                            self.road_road_button[road_button].append(other_road)
+                the_other_settlement = self.settlement_buttons.copy()
+                the_other_settlement.remove(settlement_button)
+                for other_settlement in the_other_settlement:
+                    if len([road_button for road_button in self.settlement_road_button[settlement_button] if road_button in self.settlement_road_button[other_settlement]]) > 0:
+                        if settlement_button not in self.settlement_settlement_button:
+                            self.settlement_settlement_button[settlement_button] = []
+                        self.settlement_settlement_button[settlement_button].append(other_settlement)
         else:
             for settlement in self.settlement_buttons:
                 settlement.update_together()
@@ -167,7 +202,7 @@ class MainBoard:
         clicked_settlement = None
 
         async def check_settlement_hover():
-            tasks = [settlement.check_hover((x, y)) for settlement in self.settlement_buttons]
+            tasks = [settlement.check_hover((x, y)) for settlement in self.super_surface_object.current_player.chooseable_settlement_buttons]
             return await asyncio.gather(*tasks)
         settlement_results = asyncio.run(check_settlement_hover())
         for result in settlement_results:
@@ -186,12 +221,17 @@ class MainBoard:
                                 self.super_surface_object.operation_board.change_board_type("Error",
                                                                                             "Your resources are NOT enough!")
                                 return False
+                            if  (self.super_surface_object.current_player.settlement == 2):
+                                self.super_surface_object.operation_board.remove_build_type_ui()
+                                self.super_surface_object.operation_board.change_board_type("Error",
+                                                                                            "Only can build two settlements!")
+                                return False
                         if (self.super_surface_object.round > 1) | (self.super_surface_object.current_player.settlement > 1):
                             if clicked_settlement.type == "initial":
                                 update_type = "settlement"
                             elif clicked_settlement.type == "settlement":
                                 update_type = "city"
-                            cost_dict = self.super_surface_object.operation_board.cost_list[update_type]
+                            cost_dict = CostList[update_type]
                             player_resources_copy = player.resources.copy()
                             for resource in cost_dict:
                                 if player_resources_copy[resource] >= cost_dict[resource]:
@@ -202,11 +242,23 @@ class MainBoard:
                                     return False
                             player.resources = player_resources_copy
                             self.super_surface_object.status_board.update_info()
-                        clicked_settlement.update_type()
+                        clicked_settlement.update_type(self.super_surface_object.current_player)
                         if clicked_settlement.type == "settlement":
                             player.settlement += 1
+                            self.super_surface_object.score_board.update_info(self.super_surface_object.current_player)
+                            for other_player in self.super_surface_object.get_other_player():
+                                if clicked_settlement in other_player.chooseable_settlement_buttons:
+                                    other_player.chooseable_settlement_buttons.remove(clicked_settlement)
+                            for connected_settlement in self.settlement_settlement_button[clicked_settlement]:
+                                if connected_settlement in player.chooseable_settlement_buttons:
+                                    player.chooseable_settlement_buttons.remove(connected_settlement)
+                            ## add the corresponding road to self.super_surface_object.current_player.chooseable_road_buttons
+                            for road_button in self.settlement_road_button[clicked_settlement]:
+                                if road_button not in player.chooseable_road_buttons:
+                                    player.chooseable_road_buttons.append(road_button)
                         elif clicked_settlement.type == "city":
                             player.city += 1
+                            self.super_surface_object.score_board.update_info(self.super_surface_object.current_player)
                         # add the player to the hex here and change the clicked_settlement.player to player and use the player's color
                         for hex in self.settlement_points[(clicked_settlement.x + 10, clicked_settlement.y + 10)]: # 10 is the settlement_radius in the draw_settlement function
                             if not (player in hex.settlements):
@@ -220,7 +272,7 @@ class MainBoard:
                 cursor_state = "normal"
 
         async def check_road_hover():
-            tasks = [road.check_hover((x, y)) for road in self.road_buttons]
+            tasks = [road.check_hover((x, y)) for road in self.super_surface_object.current_player.chooseable_road_buttons]
             return await asyncio.gather(*tasks)
         if not is_hover:
             road_results = asyncio.run(check_road_hover())
@@ -242,7 +294,7 @@ class MainBoard:
                                 return False
                             if clicked_road.type == "initial":
                                 update_type = "road"
-                            cost_dict = self.super_surface_object.operation_board.cost_list[update_type]
+                            cost_dict = CostList[update_type]
                             player_resources_copy = player.resources.copy()
                             for resource in cost_dict:
                                 if player_resources_copy[resource] >= cost_dict[resource]:
@@ -257,9 +309,21 @@ class MainBoard:
                             clicked_road.update_type()
                             if clicked_road.type == "road":
                                 player.road += 1
+                                self.super_surface_object.current_player.chooseable_road_buttons.remove(clicked_road)
+                                for other_player in self.super_surface_object.get_other_player():
+                                    if clicked_road in other_player.chooseable_road_buttons:
+                                        other_player.chooseable_road_buttons.remove(clicked_road)
+                                for connected_road_button in self.road_road_button[clicked_road]:
+                                    if connected_road_button not in player.chooseable_road_buttons:
+                                        player.chooseable_road_buttons.append(connected_road_button)
+                                for settlement_button in self.road_settlement_button[clicked_road]:
+                                    for other_player in self.super_surface_object.get_other_player():
+                                        if settlement_button in other_player.chooseable_settlement_buttons:
+                                            other_player.chooseable_settlement_buttons.remove(settlement_button)
                             clicked_road.display_settlement_button()
                             info = self.road_points[(clicked_road.x + clicked_road.radius, clicked_road.y + clicked_road.radius)]
-                            pygame.draw.line(self.surface, BLACK, info[0], info[1], 5) ## TODO: change the color to the player's color
+                            pygame.draw.line(self.surface, self.super_surface_object.current_player.color, info[0], info[1], 5)
+                            self.draw_points() # avoid covering the settlements
                             break
                     elif cursor_state != "hand":
                         cursor_state = "hand"

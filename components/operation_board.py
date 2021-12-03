@@ -5,10 +5,12 @@ from img_button import *
 from label import *
 
 # OperationType = {
-#     "RollDice":"Roll Dice",
-#     "ExchangeResource" : "Exchange",
-#     "RobResource": "Rob" ,
-#     "FinishTurn" : "Finish"
+#   "Roll",
+#   "Trade",
+#   "Build",
+#   "Error",
+#   "Buy",
+#   "Init",
 # }
 
 class OperationBoard:
@@ -38,7 +40,7 @@ class OperationBoard:
 
         self.draw_board()
 
-    def change_board_type(self, type, message = "Error"):
+    def change_board_type(self, type, message = "Error", back_button = True):
         resources_num = len(self.resources)
         segment_num = resources_num * 2
         if (type == "Roll"):
@@ -82,9 +84,9 @@ class OperationBoard:
             self.prev_type = self.type
             self.type = "Error"
             self.label = Label(self, message, RED, 20, 1/2, 1/2)
-            self.main_button["Back"] = ImgButton(self, self.ButtonImg["back"], 30, x=1 / 9,
-                                                 y=(segment_num - 1) / segment_num)
-
+            if back_button:
+                self.main_button["Back"] = ImgButton(self, self.ButtonImg["back"], 30, x=1 / 9,
+                                                     y=(segment_num - 1) / segment_num)
         else:
             self.type = "Init"
             self.clean_main_button()
@@ -122,12 +124,6 @@ class OperationBoard:
         ## special cases for some types
         if self.type == "Trade":
             is_hover = is_hover | self.trade_check_hover((x,y))
-        elif self.type == "Rob":
-            pass
-            #is_hover = is_hover | self.rob_check_hover((x,y)) #TODO: Add Rob Resource UI special button hover check function
-        elif self.type == "Finish":
-            pass
-            #is_hover = is_hover | self.finish_check_hover((x,y)) #TODO: Add Finish UI special button hover check function
         if not is_hover:
             global cursor_state
             cursor_state = "normal"
@@ -175,8 +171,7 @@ class OperationBoard:
                                     if count_settlement != 2:
                                         self.change_board_type("Error","Build two settlements firstly!")
                                         return is_main_button_hover
-                                self.super_surface_object.round += 1
-                                self.change_board_type("Roll") #TODO: Should change to Init
+                                self.change_board_type("Init")
 
                         elif self.type == "Trade":
                             asyncio.run(wait())
@@ -205,16 +200,14 @@ class OperationBoard:
                             asyncio.run(wait())
                             self.remove_build_type_ui()
                             if main_button == "Buy":
-                                self.change_board_type("Buy")  ##TODO: SHOULD CHANGE TO BUY
+                                self.change_board_type("Buy")
                             else:
                                 self.change_board_type("Operate")
                         elif self.type == "Buy":
                             asyncio.run(wait())
                             if main_button == "Back":
-                                # self.remove_buy_ui()                             #TODO: Add Buy UI remove function
                                 self.change_board_type("Operate")
                             else:
-                                # self.get_new_development_card()                 #TODO: Add Buy UI get new development card function
                                 self.change_board_type("Error", "This feature is pending development!")
 
                         elif self.type == "Error":
@@ -259,14 +252,10 @@ class OperationBoard:
                 for player in hex.settlements.keys():
                     for settlement in hex.settlements[player]:
                         if settlement.type == "settlement":
-                            add_value = 1
                             player.resources[resource_type] += 1
                         elif settlement.type == "city":
-                            player.resources[resource_type] += 1 # TODO: IDK WHY the add_value here would added the resource in double,
-                                                                        # TODO: it should be 2 but I have to put 1 here.
-                        # else:
-                        #     add_value = 0
-                        # player.resources[resource_type] += add_value
+                            player.resources[resource_type] += 1 # IDK WHY the add_value here would added the resource in double,
+                                                                 # it should be 2 but I have to put 1 here.
                 self.super_surface_object.status_board.update_info()
         self.main_button_check_hover(pygame.mouse.get_pos())
         dice1.remove()
@@ -386,7 +375,7 @@ class OperationBoard:
 
     ######################################## "Build Type Methods" ############################################
     def add_build_type_ui(self):
-        self.cost_list = {
+        CostList = {
             "settlement": {"lumber": 1, "brick": 1, "wool": 1, "grain": 1},
             "city"      : {"grain": 2, "ore": 3},
             "road"      : {"lumber":1, "brick":1},
@@ -394,7 +383,7 @@ class OperationBoard:
         }
         display_titles = {"Road":"road", "Settlement":"settlement", "City":"city", "Development":"devCard"}
         titile_names = ["Road", "Settlement", "City", "Development"]
-        segment_num = len(self.cost_list) + 2
+        segment_num = len(CostList) + 2
         border_width = 2
         img_size = 25
         gap_width = 0.5 * img_size
@@ -413,10 +402,10 @@ class OperationBoard:
                     buy_button_height = floor(gap_height*2/3)
                     self.main_button["Buy"] = ImgButton(self, self.ButtonImg["buy"], buy_button_height, x= label.x + label.width + gap_width, y=curr_y+buy_button_height/4, proportion=False)
                 curr_y += gap_height/2 - img_size/2
-                total_num = sum(list(self.cost_list[display_titles[title_name]].values()))
+                total_num = sum(list(CostList[display_titles[title_name]].values()))
                 curr_x = self.width - total_num * (img_size + gap_width)
-                for resource in list(self.cost_list[display_titles[title_name]].keys()):
-                    for num in range(self.cost_list[display_titles[title_name]][resource]):
+                for resource in list(CostList[display_titles[title_name]].keys()):
+                    for num in range(CostList[display_titles[title_name]][resource]):
                         image = pygame.image.load(ImageResource[resource]).convert_alpha()
                         image = pygame.transform.scale(image, (img_size, img_size))
                         self.surface.blit(image, (curr_x, curr_y))
@@ -424,7 +413,6 @@ class OperationBoard:
         self.update()
 
     def remove_build_type_ui(self):
-        del self.cost_list
         pygame.draw.rect(self.surface, LIGHTBLUE, (0, 0, self.width, self.height), border_radius=30)
         self.update()
 
