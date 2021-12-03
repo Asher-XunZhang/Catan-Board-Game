@@ -3,7 +3,7 @@ from color import *
 from calculation import *
 
 class Label:
-    def __init__(self, super_surface_object, text, color, front_size, x, y, porpotion = True):
+    def __init__(self, super_surface_object, text, color, front_size, x, y, proportion = True):
         self.font = pygame.font.Font('../resources/font/OpenSans-Semibold.ttf', front_size)
         self.text = text
         self.color = color
@@ -16,7 +16,7 @@ class Label:
         self.super_surface = super_surface_object.surface
         self.super_surface_object = super_surface_object
 
-        if porpotion:
+        if proportion:
             position = blit_position_transfer(self.super_surface, self.surface, x, y)
         else:
             position = (x, y)
@@ -41,7 +41,8 @@ class Label:
             self.color = color
         if text:
             self.text = text
+        self.remove()
         self.surface = self.font.render(self.text, True, self.color)
         self.width = self.surface.get_width()
         self.height = self.surface.get_height()
-        self.display()
+        self.update()

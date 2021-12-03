@@ -5,28 +5,6 @@ import asyncio
 from calculation import *
 
 class Hexagon:
-    Image = {
-        "wool": "../resources/img/wool.png",
-        "lumber": "../resources/img/lumber.png",
-        "grain": "../resources/img/grain.png",
-        "brick": "../resources/img/brick.png",
-        "ore": "../resources/img/ore.png",
-        "hill": "../resources/img/brick.png",
-        "forest": "../resources/img/lumber.png",
-        "field": "../resources/img/grain.png",
-        "mountain": "../resources/img/ore.png",
-        "pasture": "../resources/img/wool.png",
-        "desert": "../resources/img/desert.png",
-    }
-    Color = {
-        "pasture": (124, 252, 0),
-        "forest": (153, 76, 0),
-        "field": (255, 128, 0),
-        "hill": (178, 34, 34),  # (205, 92, 92),
-        "mountain": (192, 192, 192),  # (224,224,224),
-        "desert": (255, 215, 0)
-    }
-
     def __init__(self, surface, super_surface_object, id, num, type, hex_side, position):
         self.hex_side = hex_side
         self.super_surface = surface
@@ -36,12 +14,11 @@ class Hexagon:
         self.surface = pygame.Surface((self.hex_side*2, self.hex_side*2))
         self.id = id
         self.type = type
-        self.settlements = []
-        self.players = []
+        self.settlements = {}
         self.num = num
         self.font = pygame.font.SysFont('Arial', 25)
-        self.image = pygame.image.load(self.Image[type]).convert_alpha()
-        self.draw_regular_polygon(self.Color[type])
+        self.image = pygame.image.load(ImageResource[type]).convert_alpha()
+        self.draw_regular_polygon(Color[type])
         self.surface.set_colorkey(TRASPARENT)
         self.display()
 
@@ -98,24 +75,16 @@ class Hexagon:
         self.update()
 
     def change_num_color(self, color):
-        self.draw_regular_polygon(self.Color[self.type], color)
+        self.draw_regular_polygon(Color[self.type], color)
         self.update()
 
     def display(self):
         self.super_surface.blit(self.surface, (self.x, self.y))
         if len(self.super_surface_object.settlement_points) > 0:
-            self.super_surface_object.draw_settlement_points()
+            self.super_surface_object.draw_points()
         self.super_surface_object.update()
 
     def update(self):
         self.display()
-
-    def add_player(self, player):
-        if player not in self.players:
-            self.players.append(player)
-
-    def update_player_resources(self):
-        for player in self.players:
-            player.add_single_resources(self.type)
 
 
