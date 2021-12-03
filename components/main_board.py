@@ -258,6 +258,7 @@ class MainBoard:
                                     player.chooseable_road_buttons.append(road_button)
                         elif clicked_settlement.type == "city":
                             player.city += 1
+                            player.settlement -= 1
                             self.super_surface_object.score_board.update_info(self.super_surface_object.current_player)
                         # add the player to the hex here and change the clicked_settlement.player to player and use the player's color
                         for hex in self.settlement_points[(clicked_settlement.x + 10, clicked_settlement.y + 10)]: # 10 is the settlement_radius in the draw_settlement function
