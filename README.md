@@ -18,7 +18,8 @@ independent of road placements, unlike standard Catan.
 
 How to play:
 At the start of the game, all players place two settlements to start. Players place settlements on the corners of hexes.
-Players will receive resources based the number on the hexes surrounding the settlement. Players can then trade these 
+Players will receive resources based the number on the hexes surrounding the settlement, regardless of who rolled the dice. 
+Players can then trade these 
 resources through the trade menu or build new settlements. Players can also upgrade settlements to cities, which provide 
 2 resources instead 1 every time their hexes are rolled. Players get 1 victory point for every settlement and 2 for every
 city. The first player to 10 victory points wins. 
