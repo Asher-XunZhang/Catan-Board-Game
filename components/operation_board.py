@@ -185,11 +185,11 @@ class OperationBoard:
                                         negative_num += 1
                                 if (positive_num == 0) & (negative_num > 0):
                                     self.remove_trade_ui()
-                                    self.change_board_type("Error", "Must have income!")
+                                    self.change_board_type("Error", "Must receive resources!")
                                     return is_main_button_hover
                                 elif (negative_num == 0) & (positive_num > 0):
                                     self.remove_trade_ui()
-                                    self.change_board_type("Error", "Must have expenses!")
+                                    self.change_board_type("Error", "Must give resources!")
                                     return is_main_button_hover
                                 for resource in self.resources:
                                     self.super_surface_object.current_player.resources[resource] += self.infos[resource]
