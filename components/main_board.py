@@ -291,7 +291,7 @@ class MainBoard:
                             if self.super_surface_object.round == 1:
                                 self.super_surface_object.operation_board.remove_build_type_ui()
                                 self.super_surface_object.operation_board.change_board_type("Error",
-                                                                                            "Build two settlements firstly!")
+                                                                                            "Build two settlements first!")
                                 return False
                             if clicked_road.type == "initial":
                                 update_type = "road"
