@@ -303,7 +303,7 @@ class MainBoard:
                                 else:
                                     self.super_surface_object.operation_board.remove_build_type_ui()
                                     self.super_surface_object.operation_board.change_board_type("Error",
-                                        "Your resources are NOT enough!")
+                                        "You don't have enough resources")
                                     return False
                             player.resources = player_resources_copy
                             self.super_surface_object.status_board.update_info()
