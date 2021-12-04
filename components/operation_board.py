@@ -296,7 +296,7 @@ class OperationBoard:
                                 new_value -= 1
                                 if (self.super_surface_object.current_player.resources[resource] < abs(new_value)) & (old_value <= 0):
                                     self.remove_trade_ui()
-                                    self.change_board_type("Error", "Exceed the " + resource + " you own")
+                                    self.change_board_type("Error", "You don't have enough " + resource)
                                     return is_trade_button_hover
                             if new_value > 0:
                                 new_color = FORESTGREEN

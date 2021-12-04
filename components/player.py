@@ -12,11 +12,11 @@ class Player:
         self.city = 0
         self.road = 0
         self.resources = {
-            "brick": 40,
-            "ore": 40,
-            "grain": 40,
-            "lumber": 40,
-            "wool": 40
+            "brick": 0,
+            "ore": 0,
+            "grain": 0,
+            "lumber": 0,
+            "wool": 0
         }
         self.chooseable_settlement_buttons = self.super_surface_object.main_board.settlement_buttons.copy()
         self.chooseable_road_buttons = []
