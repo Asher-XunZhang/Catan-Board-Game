@@ -41,5 +41,3 @@ city. The first player to 10 victory points wins.
 ## References
 - [Icons](https://thenounproject.com/)
 - [Font](https://www.fontsquirrel.com/fonts/list/popular)
-
-date: "`r Sys.Date()`"
