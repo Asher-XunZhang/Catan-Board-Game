@@ -1,4 +1,3 @@
-11/4/2021
 # CS205A Final Project: Catan Board Game #
 ---
 
@@ -42,3 +41,5 @@ city. The first player to 10 victory points wins.
 ## References
 - [Icons](https://thenounproject.com/)
 - [Font](https://www.fontsquirrel.com/fonts/list/popular)
+
+date: "`r Sys.Date()`"
