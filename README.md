@@ -1,5 +1,5 @@
 # CS205A Final Project: Catan Board Game
-===
+
 ### Team 6:
 
 |Name|NetID|
